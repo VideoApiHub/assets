@@ -1,0 +1,78 @@
+{
+  "left": {
+    "name": "iPhone 17 Pro Max",
+    "short": "iPhone",
+    "color": "#89A7FF",
+    "image": "https://m.media-amazon.com/images/I/71MXmswILHL._SX679_.jpg"
+  },
+  "right": {
+    "name": "Galaxy S26 Ultra",
+    "short": "Galaxy",
+    "color": "#00D2FF",
+    "image": "https://m.media-amazon.com/images/I/41lljoZVf0L._SY300_SX300_QL70_FMwebp_.jpg"
+  },
+  "intro": {
+    "tagline": "THE ULTIMATE SHOWDOWN",
+    "subtitle": "Which flagship reigns supreme in 2025?"
+  },
+  "sections": [
+    {
+      "title": "Design & Build",
+      "specs": [
+        ["Weight", "221g", "233g", "left"],
+        ["Thickness", "8.2mm", "8.8mm", "left"],
+        ["Materials", "Titanium", "Armor Aluminum", "neutral"],
+        ["IP Rating", "IP68", "IP68", "neutral"],
+        ["In-hand Feel", "Balanced", "Large Feel", "left"]
+      ]
+    },
+    {
+      "title": "Display",
+      "specs": [
+        ["Brightness", "3000 nits", "3200 nits", "right"],
+        ["Refresh Rate", "120Hz", "144Hz", "right"],
+        ["HDR", "Dolby Vision", "HDR10+", "neutral"],
+        ["Bezels", "Ultra Thin", "Thin", "left"],
+        ["Touch Response", "Excellent", "Excellent", "neutral"]
+      ]
+    },
+    {
+      "title": "Performance",
+      "specs": [
+        ["Processor", "A19 Pro", "Snapdragon Elite", "neutral"],
+        ["Gaming", "Excellent", "Excellent+", "right"],
+        ["Thermals", "Efficient", "Cooler", "right"],
+        ["Optimization", "Best", "Great", "left"],
+        ["Benchmarks", "Top Tier", "Top Tier", "neutral"]
+      ]
+    },
+    {
+      "title": "Camera",
+      "specs": [
+        ["Video", "Best-in-Class", "Excellent", "left"],
+        ["Zoom", "5x", "10x", "right"],
+        ["Low Light", "Excellent", "Excellent", "neutral"],
+        ["Stabilization", "Best", "Very Good", "left"],
+        ["Selfie", "Natural", "Sharper", "neutral"]
+      ]
+    },
+    {
+      "title": "Battery",
+      "specs": [
+        ["Charging", "45W", "80W", "right"],
+        ["Wireless", "MagSafe", "Qi2", "neutral"],
+        ["Battery Life", "All Day+", "Heavy Usage", "right"],
+        ["Reverse Charge", "No", "Yes", "right"],
+        ["Optimization", "Excellent", "Great", "left"]
+      ]
+    }
+  ],
+  "verdict": {
+    "title": "Who Takes\nThe Crown?",
+    "leftSummary": "Ecosystem, optimization & cinematic video",
+    "rightSummary": "Charging, zoom, AI & gaming versatility",
+    "cta": "COMMENT YOUR WINNER 👇"
+  },
+  "framesPerSection": 110,
+  "finalSlideDuration": 120
+}
