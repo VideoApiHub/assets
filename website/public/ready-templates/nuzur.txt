@@ -1,0 +1,533 @@
+import React from "react";
+import {
+  AbsoluteFill,
+  Img,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+
+const NuzurPremium = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Put logo in public/nuzur-logo.svg
+  const logo = "https://nuzur.com/nuzur-logo.svg";
+
+  const scene1 = frame < 90;
+  const scene2 = frame >= 90 && frame < 210;
+  const scene3 = frame >= 210 && frame < 330;
+  const scene4 = frame >= 330;
+
+  const titleScale = spring({
+    fps,
+    frame,
+    config: {
+      damping: 14,
+      stiffness: 120,
+    },
+  });
+
+  const lineProgress = interpolate(
+    frame,
+    [90, 180],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  const generateProgress = interpolate(
+    frame,
+    [220, 320],
+    [0, 100],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  return (
+    <AbsoluteFill
+      style={{
+        background: "#ffffff",
+        fontFamily: "Inter, sans-serif",
+        color: "#0f172a",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `
+            radial-gradient(
+              circle at ${
+                20 + Math.sin(frame / 40) * 10
+              }% 15%,
+              rgba(37,99,235,.10),
+              transparent 35%
+            ),
+            radial-gradient(
+              circle at 85% 75%,
+              rgba(59,130,246,.08),
+              transparent 35%
+            )
+          `,
+        }}
+      />
+
+      {/* Grid */}
+      {Array.from({ length: 32 }).map(
+        (_, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: i * 60,
+              width: 1,
+              height: "100%",
+              background:
+                "rgba(15,23,42,.03)",
+            }}
+          />
+        )
+      )}
+
+      {/* Floating particles */}
+      {Array.from({ length: 50 }).map(
+        (_, i) => (
+          <div
+            key={`p-${i}`}
+            style={{
+              position: "absolute",
+              width: 4,
+              height: 4,
+              borderRadius: "50%",
+              background: "#2563eb",
+              opacity: 0.15,
+              left:
+                ((i * 73 +
+                  frame * 1.2) %
+                  2000),
+              top:
+                ((i * 57 +
+                  frame * 0.8) %
+                  1200),
+            }}
+          />
+        )
+      )}
+
+      {/* Header */}
+      <Img
+        src={logo}
+        style={{
+          position: "absolute",
+          top: 50,
+          left: 70,
+          width: 180,
+        }}
+      />
+
+      {/* Watermark */}
+      <Img
+        src={logo}
+        style={{
+          position: "absolute",
+          right: -150,
+          top: 100,
+          width: 900,
+          opacity: 0.03,
+        }}
+      />
+
+      {/* ---------- SCENE 1 ---------- */}
+      {scene1 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              left: 120,
+              top: 220,
+              transform: `scale(${titleScale})`,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 110,
+                fontWeight: 900,
+                lineHeight: 0.95,
+                letterSpacing: -5,
+              }}
+            >
+              Backend
+              <br />
+              Development
+              <br />
+              Reimagined.
+            </div>
+
+            <div
+              style={{
+                marginTop: 40,
+                fontSize: 34,
+                color: "#475569",
+                maxWidth: 700,
+                lineHeight: 1.4,
+              }}
+            >
+              Design your schema visually.
+              Generate your backend
+              automatically.
+            </div>
+          </div>
+
+          {/* Entity cards */}
+          {[
+            {
+              x: 1180,
+              y: 220,
+              label: "User",
+            },
+            {
+              x: 1450,
+              y: 220,
+              label: "Post",
+            },
+            {
+              x: 1320,
+              y: 470,
+              label: "Comment",
+            },
+          ].map((node, idx) => (
+            <div
+              key={node.label}
+              style={{
+                position: "absolute",
+                left: node.x,
+                top:
+                  node.y +
+                  Math.sin(
+                    frame / 15 + idx
+                  ) *
+                    8,
+                width: 220,
+                height: 100,
+                borderRadius: 24,
+                background: "#fff",
+                border:
+                  "2px solid #dbeafe",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: 30,
+                fontWeight: 700,
+                boxShadow:
+                  "0 20px 60px rgba(37,99,235,.12)",
+              }}
+            >
+              {node.label}
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* ---------- SCENE 2 ---------- */}
+      {scene2 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: 120,
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 72,
+                fontWeight: 900,
+              }}
+            >
+              Design Your Schema
+            </div>
+
+            <div
+              style={{
+                marginTop: 16,
+                fontSize: 28,
+                color: "#64748b",
+              }}
+            >
+              Connect entities and
+              relationships visually.
+            </div>
+          </div>
+
+          <svg
+            width="1920"
+            height="1080"
+            style={{
+              position: "absolute",
+            }}
+          >
+            <line
+              x1="700"
+              y1="350"
+              x2={
+                700 +
+                (1200 - 700) *
+                  lineProgress
+              }
+              y2="350"
+              stroke="#2563eb"
+              strokeWidth="6"
+            />
+
+            <line
+              x1="700"
+              y1="350"
+              x2={
+                950 +
+                (950 - 700) *
+                  lineProgress
+              }
+              y2={
+                650 -
+                (650 - 350) *
+                  (1 - lineProgress)
+              }
+              stroke="#2563eb"
+              strokeWidth="6"
+            />
+
+            <line
+              x1="1200"
+              y1="350"
+              x2={
+                950 +
+                (950 - 1200) *
+                  lineProgress
+              }
+              y2={
+                650 -
+                (650 - 350) *
+                  (1 - lineProgress)
+              }
+              stroke="#2563eb"
+              strokeWidth="6"
+            />
+          </svg>
+
+          {[
+            {
+              x: 600,
+              y: 300,
+              label: "User",
+            },
+            {
+              x: 1100,
+              y: 300,
+              label: "Post",
+            },
+            {
+              x: 850,
+              y: 600,
+              label: "Comment",
+            },
+          ].map((node) => (
+            <div
+              key={node.label}
+              style={{
+                position: "absolute",
+                left: node.x,
+                top: node.y,
+                width: 220,
+                height: 100,
+                borderRadius: 24,
+                background: "#fff",
+                border:
+                  "2px solid #dbeafe",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: 30,
+                fontWeight: 700,
+                boxShadow:
+                  "0 20px 60px rgba(37,99,235,.12)",
+              }}
+            >
+              {node.label}
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* ---------- SCENE 3 ---------- */}
+      {scene3 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: 100,
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 72,
+                fontWeight: 900,
+              }}
+            >
+              Generate Everything
+            </div>
+
+            <div
+              style={{
+                marginTop: 20,
+                color: "#64748b",
+                fontSize: 28,
+              }}
+            >
+              From a single source of
+              truth.
+            </div>
+          </div>
+
+          {[
+            "Database",
+            "REST API",
+            "GraphQL",
+            "Validation",
+            "Admin UI",
+            "SDKs",
+          ].map((item, i) => {
+            const cardScale = spring({
+              fps,
+              frame:
+                Math.max(
+                  0,
+                  frame - 210 - i * 5
+                ),
+            });
+
+            return (
+              <div
+                key={item}
+                style={{
+                  position: "absolute",
+                  left:
+                    180 +
+                    (i % 3) * 520,
+                  top:
+                    280 +
+                    Math.floor(
+                      i / 3
+                    ) *
+                      220,
+                  width: 420,
+                  height: 140,
+                  borderRadius: 28,
+                  background: "#fff",
+                  border:
+                    "2px solid #dbeafe",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: 34,
+                  fontWeight: 800,
+                  color: "#2563eb",
+                  transform: `scale(${cardScale})`,
+                  boxShadow:
+                    "0 25px 70px rgba(37,99,235,.15)",
+                }}
+              >
+                ✓ {item}
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      {/* ---------- SCENE 4 ---------- */}
+      {scene4 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            background:
+              "rgba(255,255,255,.92)",
+          }}
+        >
+          <Img
+            src={logo}
+            style={{
+              width: 320,
+              marginBottom: 50,
+            }}
+          />
+
+          <div
+            style={{
+              fontSize: 160,
+              fontWeight: 900,
+              color: "#2563eb",
+              lineHeight: 1,
+            }}
+          >
+            {Math.round(
+              generateProgress
+            )}
+            %
+          </div>
+
+          <div
+            style={{
+              marginTop: 10,
+              fontSize: 34,
+              color: "#475569",
+            }}
+          >
+            Backend Generated
+          </div>
+
+          <div
+            style={{
+              marginTop: 60,
+              fontSize: 96,
+              fontWeight: 900,
+              textAlign: "center",
+              lineHeight: 1,
+              letterSpacing: -4,
+            }}
+          >
+            Build Faster.
+            <br />
+            Ship Earlier.
+          </div>
+
+          <div
+            style={{
+              marginTop: 30,
+              fontSize: 42,
+              color: "#2563eb",
+            }}
+          >
+            nuzur.com
+          </div>
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+};
+
+export default NuzurPremium;

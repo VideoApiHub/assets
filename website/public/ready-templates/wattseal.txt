@@ -1,0 +1,497 @@
+import React from "react";
+import {
+  AbsoluteFill,
+  Img,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+
+const WattSealPromo = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const logo = "https://wattseal.com/icon.svg";
+  const dashboard =
+    "https://wattseal.com/dashboard.png";
+
+  const scene1 = frame < 90;
+  const scene2 = frame >= 90 && frame < 180;
+  const scene3 = frame >= 180 && frame < 270;
+  const scene4 = frame >= 270 && frame < 360;
+  const scene5 = frame >= 360;
+
+  const heroScale = spring({
+    fps,
+    frame,
+    config: {
+      damping: 15,
+      stiffness: 120,
+    },
+  });
+
+  const dashboardScale = interpolate(
+    frame,
+    [90, 180],
+    [0.85, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  const wattValue = Math.round(
+    interpolate(
+      frame,
+      [180, 240],
+      [0, 200],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }
+    )
+  );
+
+  const costValue = Math.round(
+    interpolate(
+      frame,
+      [210, 270],
+      [0, 120],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }
+    )
+  );
+
+  const co2Value = Math.round(
+    interpolate(
+      frame,
+      [230, 290],
+      [0, 200],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }
+    )
+  );
+
+  return (
+    <AbsoluteFill
+      style={{
+        background:
+          "linear-gradient(135deg,#050816 0%,#0F172A 100%)",
+        color: "#fff",
+        overflow: "hidden",
+        fontFamily:
+          "Inter, system-ui, sans-serif",
+      }}
+    >
+      {/* Animated Glow */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `
+            radial-gradient(
+              circle at ${
+                20 +
+                Math.sin(frame / 40) * 10
+              }% 20%,
+              rgba(56,189,248,.20),
+              transparent 35%
+            ),
+            radial-gradient(
+              circle at 80% 70%,
+              rgba(125,211,252,.12),
+              transparent 35%
+            )
+          `,
+        }}
+      />
+
+      {/* Floating Particles */}
+      {Array.from({ length: 70 }).map(
+        (_, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              width: 4,
+              height: 4,
+              borderRadius: "50%",
+              background: "#7DD3FC",
+              opacity: 0.25,
+              left:
+                ((i * 83 +
+                  frame * 1.5) %
+                  2000),
+              top:
+                ((i * 61 +
+                  frame * 0.8) %
+                  1200),
+            }}
+          />
+        )
+      )}
+
+      {/* Watermark */}
+      <Img
+        src={logo}
+        style={{
+          position: "absolute",
+          right: -150,
+          top: -120,
+          width: 900,
+          opacity: 0.04,
+        }}
+      />
+
+      {/* Header Logo */}
+      <Img
+        src={logo}
+        style={{
+          position: "absolute",
+          top: 50,
+          left: 70,
+          width: 90,
+        }}
+      />
+
+      {/* SCENE 1 */}
+      {scene1 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              left: 120,
+              top: 170,
+              width: 950,
+              transform: `scale(${heroScale})`,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 92,
+                fontWeight: 900,
+                lineHeight: 1,
+                letterSpacing: -4,
+                color: "#FFFFFF",
+              }}
+            >
+              Your PC's power
+              <br />
+              consumption,
+              <br />
+              monitored
+              <br />
+              in real-time.
+            </div>
+
+            <div
+              style={{
+                marginTop: 35,
+                fontSize: 34,
+                lineHeight: 1.5,
+                color: "#7DD3FC",
+                maxWidth: 800,
+              }}
+            >
+              The world's first app
+              that shows exactly how
+              many watts every
+              application uses.
+            </div>
+          </div>
+
+          <Img
+            src={logo}
+            style={{
+              position: "absolute",
+              right: 180,
+              top:
+                180 +
+                Math.sin(frame / 12) *
+                  15,
+              width: 380,
+              filter:
+                "drop-shadow(0 0 40px rgba(56,189,248,.4))",
+            }}
+          />
+        </>
+      )}
+
+      {/* SCENE 2 */}
+      {scene2 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              top: 70,
+              textAlign: "center",
+              fontSize: 72,
+              fontWeight: 900,
+              color: "#FFFFFF",
+            }}
+          >
+            Make the invisible visible.
+          </div>
+
+          <Img
+            src={dashboard}
+            style={{
+              position: "absolute",
+              left: 210,
+              top: 180,
+              width: 1500,
+              borderRadius: 30,
+              transform: `scale(${dashboardScale})`,
+              boxShadow:
+                "0 0 80px rgba(56,189,248,.25)",
+            }}
+          />
+
+        </>
+      )}
+
+      {/* SCENE 3 */}
+      {scene3 && (
+        <>
+          <Img
+            src={dashboard}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: 0.15,
+            }}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "rgba(5,8,22,.82)",
+            }}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              top: 120,
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 160,
+                fontWeight: 900,
+                color: "#38BDF8",
+              }}
+            >
+              {wattValue}W
+            </div>
+
+            <div
+              style={{
+                fontSize: 36,
+                color: "#94A3B8",
+              }}
+            >
+              Average desktop
+              consumption
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              left: 220,
+              bottom: 180,
+              width: 650,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 90,
+                fontWeight: 900,
+                color: "#7DD3FC",
+              }}
+            >
+              €{costValue}
+            </div>
+
+            <div
+              style={{
+                fontSize: 32,
+                color: "#94A3B8",
+              }}
+            >
+              Annual electricity cost
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              right: 220,
+              bottom: 180,
+              width: 650,
+              textAlign: "right",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 90,
+                fontWeight: 900,
+                color: "#7DD3FC",
+              }}
+            >
+              {co2Value}kg
+            </div>
+
+            <div
+              style={{
+                fontSize: 32,
+                color: "#94A3B8",
+              }}
+            >
+              Annual CO₂ footprint
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* SCENE 4 */}
+      {scene4 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: 90,
+              width: "100%",
+              textAlign: "center",
+              fontSize: 72,
+              fontWeight: 900,
+            }}
+          >
+            Built for efficiency.
+          </div>
+
+          {[
+            "Open Source",
+            "Built in Rust",
+            "Near-Zero Overhead",
+            "100% Private",
+            "AMD / Intel / NVIDIA",
+            "Windows • macOS • Linux",
+          ].map((item, i) => {
+            const scale = spring({
+              fps,
+              frame:
+                Math.max(
+                  0,
+                  frame - 270 - i * 5
+                ),
+            });
+
+            return (
+              <div
+                key={item}
+                style={{
+                  position: "absolute",
+                  left:
+                    170 +
+                    (i % 3) * 540,
+                  top:
+                    280 +
+                    Math.floor(i / 3) *
+                      220,
+                  width: 460,
+                  height: 140,
+                  borderRadius: 26,
+                  background:
+                    "rgba(255,255,255,.04)",
+                  border:
+                    "1px solid rgba(125,211,252,.18)",
+                  boxShadow:
+                    "0 0 40px rgba(56,189,248,.08)",
+                  display: "flex",
+                  justifyContent:
+                    "center",
+                  alignItems: "center",
+                  fontSize: 32,
+                  fontWeight: 700,
+                  color: "#FFFFFF",
+                  transform: `scale(${scale})`,
+                }}
+              >
+                ✓ {item}
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      {/* SCENE 5 */}
+      {scene5 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent:
+              "center",
+            alignItems: "center",
+          }}
+        >
+          <Img
+            src={logo}
+            style={{
+              width: 240,
+              marginBottom: 50,
+              filter:
+                "drop-shadow(0 0 40px rgba(56,189,248,.4))",
+            }}
+          />
+
+          <div
+            style={{
+              fontSize: 92,
+              fontWeight: 900,
+              textAlign: "center",
+              lineHeight: 1,
+              letterSpacing: -4,
+            }}
+          >
+            Cut your energy bill.
+            <br />
+            Reduce your carbon footprint.
+            <br />
+            Know where every watt goes.
+          </div>
+
+          <div
+            style={{
+              marginTop: 40,
+              fontSize: 38,
+              color: "#7DD3FC",
+            }}
+          >
+            wattseal.com
+          </div>
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+};
+
+export default WattSealPromo;
+

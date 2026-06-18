@@ -1,0 +1,532 @@
+import React from "react";
+import {
+  AbsoluteFill,
+  Img,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+
+const GuardianGazePromo = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Save locally as:
+  // public/guardian-gaze-logo.svg
+  const logo = "https://www.guardiangaze.com/images/logo-blue.svg";
+
+  const scene1 = frame < 90;
+  const scene2 = frame >= 90 && frame < 180;
+  const scene3 = frame >= 180 && frame < 300;
+  const scene4 = frame >= 300 && frame < 390;
+  const scene5 = frame >= 390;
+
+  const heroScale = spring({
+    fps,
+    frame,
+    config: {
+      damping: 14,
+      stiffness: 120,
+    },
+  });
+
+  const scanBeam = interpolate(
+    frame,
+    [180, 300],
+    [220, 1700],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  const score = Math.round(
+    interpolate(
+      frame,
+      [300, 390],
+      [18, 100],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }
+    )
+  );
+
+  return (
+    <AbsoluteFill
+      style={{
+        background: "#FFFFFF",
+        color: "#111827",
+        overflow: "hidden",
+        fontFamily:
+          "Inter, system-ui, sans-serif",
+      }}
+    >
+      {/* Animated Background */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `
+            radial-gradient(
+              circle at ${
+                15 +
+                Math.sin(frame / 40) * 8
+              }% 10%,
+              rgba(10,10,119,.08),
+              transparent 35%
+            ),
+            radial-gradient(
+              circle at 85% 75%,
+              rgba(10,10,119,.05),
+              transparent 35%
+            )
+          `,
+        }}
+      />
+
+      {/* Watermark Logo */}
+      <Img
+        src={logo}
+        style={{
+          position: "absolute",
+          right: -250,
+          top: -120,
+          width: 950,
+          opacity: 0.03,
+        }}
+      />
+
+      {/* Floating particles */}
+      {Array.from({ length: 50 }).map(
+        (_, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              width: 4,
+              height: 4,
+              borderRadius: "50%",
+              background: "#0A0A77",
+              opacity: 0.12,
+              left:
+                ((i * 71 +
+                  frame * 1.1) %
+                  2000),
+              top:
+                ((i * 97 +
+                  frame * 0.7) %
+                  1200),
+            }}
+          />
+        )
+      )}
+
+      {/* Header Logo */}
+      <Img
+        src={logo}
+        style={{
+          position: "absolute",
+          top: 50,
+          left: 70,
+          width: 220,
+        }}
+      />
+
+      {/* SCENE 1 */}
+      {scene1 && (
+        <div
+          style={{
+            position: "absolute",
+            left: 120,
+            top: 180,
+            width: 1100,
+            transform: `scale(${heroScale})`,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 98,
+              fontWeight: 900,
+              lineHeight: 0.95,
+              letterSpacing: -4,
+              color: "#0A0A77",
+            }}
+          >
+            Find the hidden
+            <br />
+            WordPress malware
+            <br />
+            your firewall can't see.
+          </div>
+
+          <div
+            style={{
+              marginTop: 40,
+              fontSize: 32,
+              lineHeight: 1.5,
+              color: "#475569",
+              maxWidth: 820,
+            }}
+          >
+            Analyze code behavior.
+            Detect hidden backdoors.
+            Stop attacks before they
+            spread through your site.
+          </div>
+
+          <div
+            style={{
+              marginTop: 60,
+              display: "flex",
+              gap: 18,
+            }}
+          >
+            {[
+              "AI Detection",
+              "Backdoor Discovery",
+              "File Monitoring",
+            ].map((item) => (
+              <div
+                key={item}
+                style={{
+                  padding:
+                    "14px 24px",
+                  borderRadius: 999,
+                  background:
+                    "rgba(10,10,119,.06)",
+                  color: "#0A0A77",
+                  fontWeight: 700,
+                  border:
+                    "1px solid rgba(10,10,119,.12)",
+                }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SCENE 2 */}
+      {scene2 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              top: 110,
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 72,
+                fontWeight: 900,
+                color: "#0A0A77",
+              }}
+            >
+              Traditional scanners
+              miss intent.
+            </div>
+
+            <div
+              style={{
+                marginTop: 15,
+                fontSize: 28,
+                color: "#64748B",
+              }}
+            >
+              Guardian Gaze analyzes
+              what the code is trying
+              to do.
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              left: 220,
+              top: 260,
+              width: 1480,
+              padding: 50,
+              borderRadius: 30,
+              background: "#FFFFFF",
+              border:
+                "2px solid #E5E7EB",
+              fontFamily:
+                "JetBrains Mono, monospace",
+              fontSize: 34,
+              lineHeight: 2,
+              boxShadow:
+                "0 25px 70px rgba(10,10,119,.08)",
+            }}
+          >
+            <div
+              style={{
+                color: "#DC2626",
+              }}
+            >
+              eval(base64_decode($payload));
+            </div>
+
+            <div>
+              monitor_filesystem();
+            </div>
+
+            <div
+              style={{
+                color: "#DC2626",
+              }}
+            >
+              shell_exec($command);
+            </div>
+
+            <div>
+              scan_wp_plugins();
+            </div>
+
+            <div
+              style={{
+                color: "#DC2626",
+              }}
+            >
+              create_hidden_admin();
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* SCENE 3 */}
+      {scene3 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              top: 80,
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 72,
+                fontWeight: 900,
+                color: "#0A0A77",
+              }}
+            >
+              AI analyzes code behavior.
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              left: 180,
+              top: 220,
+              width: 1560,
+              height: 560,
+              borderRadius: 30,
+              background: "#FFFFFF",
+              border:
+                "2px solid #E5E7EB",
+              boxShadow:
+                "0 25px 70px rgba(10,10,119,.08)",
+            }}
+          />
+
+          {/* Scan Beam */}
+          <div
+            style={{
+              position: "absolute",
+              left: scanBeam,
+              top: 220,
+              width: 8,
+              height: 560,
+              background: "#0A0A77",
+              boxShadow:
+                "0 0 20px #0A0A77, 0 0 80px #0A0A77",
+            }}
+          />
+
+          {[
+            "Hidden Backdoor",
+            "Suspicious Behavior",
+            "Unauthorized File Change",
+            "Malware Injection",
+          ].map((item, idx) => (
+            <div
+              key={item}
+              style={{
+                position: "absolute",
+                left:
+                  260 +
+                  (idx % 2) * 760,
+                top:
+                  300 +
+                  Math.floor(
+                    idx / 2
+                  ) *
+                    180,
+                width: 600,
+                height: 110,
+                borderRadius: 24,
+                background:
+                  "#FFFFFF",
+                border:
+                  "2px solid rgba(10,10,119,.15)",
+                boxShadow:
+                  "0 20px 60px rgba(10,10,119,.08)",
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: 30,
+                fontSize: 30,
+                fontWeight: 700,
+                color: "#0A0A77",
+              }}
+            >
+              ✓ {item}
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* SCENE 4 */}
+      {scene4 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent:
+              "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              width: 260,
+              height: 260,
+              borderRadius: "50%",
+              border:
+                "3px solid rgba(10,10,119,.25)",
+              display: "flex",
+              justifyContent:
+                "center",
+              alignItems: "center",
+              boxShadow:
+                "0 0 120px rgba(10,10,119,.15)",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 130,
+              }}
+            >
+              🛡️
+            </div>
+          </div>
+
+          <div
+            style={{
+              fontSize: 180,
+              fontWeight: 900,
+              color: "#0A0A77",
+              lineHeight: 1,
+              marginTop: 20,
+            }}
+          >
+            {score}
+          </div>
+
+          <div
+            style={{
+              fontSize: 36,
+              color: "#64748B",
+            }}
+          >
+            Security Score
+          </div>
+
+          <div
+            style={{
+              marginTop: 40,
+              textAlign: "center",
+              fontSize: 48,
+              fontWeight: 700,
+            }}
+          >
+            Real-time protection.
+            <br />
+            Instant alerts.
+          </div>
+        </div>
+      )}
+
+      {/* SCENE 5 */}
+      {scene5 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent:
+              "center",
+            alignItems: "center",
+            background:
+              "rgba(255,255,255,.94)",
+          }}
+        >
+          <Img
+            src={logo}
+            style={{
+              width: 380,
+              marginBottom: 60,
+            }}
+          />
+
+          <div
+            style={{
+              fontSize: 96,
+              fontWeight: 900,
+              textAlign: "center",
+              lineHeight: 1,
+              letterSpacing: -4,
+              color: "#0A0A77",
+            }}
+          >
+            Find threats before
+            <br />
+            they become breaches.
+          </div>
+
+          <div
+            style={{
+              marginTop: 30,
+              fontSize: 40,
+              color: "#475569",
+            }}
+          >
+            AI-Powered WordPress
+            Malware Detection
+          </div>
+
+          <div
+            style={{
+              marginTop: 50,
+              fontSize: 32,
+              color: "#64748B",
+            }}
+          >
+            guardiangaze.com
+          </div>
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+};
+
+export default GuardianGazePromo;
