@@ -1,7 +1,8 @@
 {
   "brandName": "nuzur",
   "logo": "https://nuzur.com/nuzur-logo.svg",
-  "logoHasWordmark": true,
+   "brandWordmark":"Nuzur",
+  "logoHasWordmark": false,
   "logoWidth": 420,
   "primary": "#1E88E5",
   "primaryDark": "#1565C0",
@@ -50,7 +51,7 @@
       "stats": [{ "value": 3, "label": "Outputs per change" }]
     },
     {
-      "image": "saas/nuzur/data-manager.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
       "device": "desktop",
       "aspect": 1.7777,
       "eyebrow": "DATA MANAGER",
