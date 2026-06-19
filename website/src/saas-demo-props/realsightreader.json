@@ -27,7 +27,7 @@
   "subheadline": "Sight-read the music you actually play — drill notes, rhythm, intervals, and harmony right in your browser. Free, no account.",
   "screens": [
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/realsight/realsight1.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/e8dd96842866c6ddbcfe52e886ac6f309e481a3c/website/public/saas/realsight/realsight1.png",
       "device": "mobile",
       "aspect": 0.6,
       "eyebrow": "NOTE READING",
