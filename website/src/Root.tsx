@@ -21,6 +21,7 @@ import WealthMinute09, { minute09Defaults } from './WealthMinute09';
 import WealthMinute10, { minute10Defaults } from './WealthMinute10';
 import WealthMinute11, { minute11Defaults } from './WealthMinute11';
 import WealthMinute12, { minute12Defaults } from './WealthMinute12';
+import SaasDemo, { pillarDemoDefaults, getSaasDemoDuration } from './SaasDemo';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -237,6 +238,18 @@ export const RemotionRoot: React.FC = () => {
           const durationInFrames = await getDurationFromAudio(p.audioUrl, 30);
           return {durationInFrames};
         }}
+      />
+      <Composition
+        id="SaasDemoPillar"
+        component={SaasDemo}
+        durationInFrames={getSaasDemoDuration(pillarDemoDefaults)}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={pillarDemoDefaults}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getSaasDemoDuration(props as typeof pillarDemoDefaults),
+        })}
       />
     </>
   );
