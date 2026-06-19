@@ -3,10 +3,10 @@
   "logo": "https://halfquill.com/opengraph-image.png?opengraph-image.42ygwb626rl8v.png",
   "logoHasWordmark": true,
   "logoWidth": 520,
-  "primary": "#C8A24C",
-  "primaryDark": "#8F6E2E",
-  "accent": "#E8C879",
-  "bg": "#0E0C09",
+  "primary": "#E46F42",
+  "primaryDark": "#C85A31",
+  "accent": "#79C2DA",
+  "bg": "#071827",
   "text": "#FFFFFF",
   "watermark": {
     "enabled": true,
@@ -26,7 +26,7 @@
   "subheadline": "A five-minute daily writing ritual where stories grow one section at a time — every word written by a person, never AI.",
   "screens": [
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/halfquill/halfquill1.png",
       "device": "desktop",
       "aspect": 1.5,
       "eyebrow": "DAILY WARM-UP",
@@ -39,7 +39,7 @@
       ]
     },
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/halfquill/halfquill2.png",
       "device": "desktop",
       "aspect": 1.5,
       "eyebrow": "WRITE THE NEXT SECTION",
@@ -49,7 +49,7 @@
       "hotspot": { "x": 0.66, "y": 0.3, "label": "Your turn" }
     },
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/halfquill/halfquill3.png",
       "device": "desktop",
       "aspect": 1.5,
       "eyebrow": "START A PLOT",
