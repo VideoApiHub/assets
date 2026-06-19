@@ -1,0 +1,74 @@
+{
+  "brandName": "AppVideoStudio",
+  "logo": "https://appvideostudio.com/alt-logo3-cropped-resized-compressed3.png",
+  "brandWordmark": "AppVideoStudio",
+  "logoHasWordmark": false,
+  "logoWidth": 300,
+  "primary": "#7C5CFC",
+  "primaryDark": "#5436D6",
+  "accent": "#A98DFF",
+  "bg": "#0B0814",
+  "text": "#FFFFFF",
+  "watermark": {
+    "enabled": true,
+    "label": "videoapihub.com"
+  },
+  "promo": {
+    "enabled": true,
+    "badge": "MADE IN UNDER A MINUTE",
+    "title": "This video was created in under a minute",
+    "highlight": "minute",
+    "brand": "videoapihub.com",
+    "cta": "Try it today — free",
+    "url": "videoapihub.com"
+  },
+  "eyebrow": "APP VIDEO STUDIO",
+  "headline": "Your personal studio to present your apps",
+  "subheadline": "Turn screen recordings into cinematic 3D product videos with timeline components — built entirely in your browser.",
+  "screens": [
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "START FAST",
+      "title": "Begin with timeline components",
+      "subtitle": "Choose a polished base scene instead of a blank canvas — backgrounds, overlays, and 3D worlds ready to use.",
+      "chips": ["55 components", "3D scenes", "Overlays"],
+      "stats": [{ "value": 55, "label": "Timeline components" }]
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "EDIT",
+      "title": "Adjust everything from panels",
+      "subtitle": "Tune camera, timing, text, and motion with focused controls — every change previews instantly.",
+      "chips": ["Camera", "Timing", "Text"],
+      "hotspot": { "x": 0.7, "y": 0.24, "label": "Live preview" }
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "EXPORT",
+      "title": "Render polished MP4 in-browser",
+      "subtitle": "Deterministic, frame-exact export to MP4 — slow hardware never changes the result.",
+      "chips": ["MP4", "Up to 4K", "Deterministic"],
+      "stats": [{ "value": 100, "label": "In-browser", "suffix": "%" }]
+    }
+  ],
+  "features": [
+    "Timeline Editor",
+    "Components Panel",
+    "3D Scenes",
+    "Camera System",
+    "Canvas Dimensions",
+    "MP4 Export",
+    "Public Player",
+    "SDK & Skills"
+  ],
+  "ctaTitle": "Present your apps like a studio",
+  "ctaSubtitle": "Start with a 3-day free trial.",
+  "ctaButton": "See Plans",
+  "url": "appvideostudio.com"
+}

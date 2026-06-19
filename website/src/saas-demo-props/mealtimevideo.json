@@ -1,0 +1,73 @@
+{
+  "brandName": "MealTimeVideo",
+  "logo": "https://mealtimevideo.com/mealtimewatch.svg",
+  "brandWordmark": "MealTimeVideo",
+  "logoHasWordmark": false,
+  "logoWidth": 300,
+  "primary": "#FF6B35",
+  "primaryDark": "#C9491D",
+  "accent": "#FF9466",
+  "bg": "#140B07",
+  "text": "#FFFFFF",
+  "watermark": {
+    "enabled": true,
+    "label": "videoapihub.com"
+  },
+  "promo": {
+    "enabled": true,
+    "badge": "MADE IN UNDER A MINUTE",
+    "title": "This video was created in under a minute",
+    "highlight": "minute",
+    "brand": "videoapihub.com",
+    "cta": "Try it today — free",
+    "url": "videoapihub.com"
+  },
+  "eyebrow": "MEALTIME ENTERTAINMENT",
+  "headline": "Videos worth watching while you eat",
+  "subheadline": "A community platform for discovering and sharing the best YouTube videos to enjoy during your meal.",
+  "screens": [
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "FOR YOU",
+      "title": "A feed tuned to your meal",
+      "subtitle": "A personal feed of mealtime-length videos, surfaced by the community and tuned to what you love.",
+      "chips": ["For You", "Trending", "Following"],
+      "stats": [{ "value": 12, "label": "Categories" }]
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "JUST THE RIGHT LENGTH",
+      "title": "Pick videos that fit your meal",
+      "subtitle": "Filter by length so every video wraps up right about when your plate does.",
+      "chips": ["Length filter", "8–25 min", "No endless scroll"],
+      "hotspot": { "x": 0.74, "y": 0.18, "label": "Length filter" }
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "BUILD YOUR LIST",
+      "title": "Save favorites and submit picks",
+      "subtitle": "Sign in with Google to save the videos you love and submit your own picks for everyone.",
+      "chips": ["Google sign-in", "Favorites", "Submit"]
+    }
+  ],
+  "features": [
+    "Personal Feed",
+    "Trending",
+    "Following",
+    "Length Filter",
+    "12 Categories",
+    "Save Favorites",
+    "Submit Picks",
+    "Google Sign-In"
+  ],
+  "ctaTitle": "Find your next mealtime video",
+  "ctaSubtitle": "Sign in with Google — free to start.",
+  "ctaButton": "Start Watching",
+  "url": "mealtimevideo.com"
+}

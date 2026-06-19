@@ -1,0 +1,75 @@
+{
+  "brandName": "Half Quill",
+  "logo": "https://halfquill.com/opengraph-image.png?opengraph-image.42ygwb626rl8v.png",
+  "logoHasWordmark": true,
+  "logoWidth": 520,
+  "primary": "#C8A24C",
+  "primaryDark": "#8F6E2E",
+  "accent": "#E8C879",
+  "bg": "#0E0C09",
+  "text": "#FFFFFF",
+  "watermark": {
+    "enabled": true,
+    "label": "videoapihub.com"
+  },
+  "promo": {
+    "enabled": true,
+    "badge": "MADE IN UNDER A MINUTE",
+    "title": "This video was created in under a minute",
+    "highlight": "minute",
+    "brand": "videoapihub.com",
+    "cta": "Try it today — free",
+    "url": "videoapihub.com"
+  },
+  "eyebrow": "COLLABORATIVE STORYTELLING",
+  "headline": "Pick up where a stranger left off",
+  "subheadline": "A five-minute daily writing ritual where stories grow one section at a time — every word written by a person, never AI.",
+  "screens": [
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "DAILY WARM-UP",
+      "title": "Read a plot from a stranger",
+      "subtitle": "A world, a character, a moment of tension — written by someone in the community to spark your imagination.",
+      "chips": ["Daily prompts", "Community", "5 minutes"],
+      "stats": [
+        { "value": 4, "label": "Sparks a day" },
+        { "value": 5, "label": "Minutes", "suffix": " min" }
+      ]
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "WRITE THE NEXT SECTION",
+      "title": "Push the story forward",
+      "subtitle": "Add a twist, a revelation, or a quiet turn — you can't write two sections in a row, so the surprise never stops.",
+      "chips": ["One section", "No AI", "Surprise"],
+      "hotspot": { "x": 0.66, "y": 0.3, "label": "Your turn" }
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "START A PLOT",
+      "title": "Spark tomorrow's writers",
+      "subtitle": "Write the start of your own plot, drop it in the pool, and watch a stranger carry it forward tomorrow.",
+      "chips": ["Earn Quills", "Keep a streak", "No follower counts"]
+    }
+  ],
+  "features": [
+    "Daily Warm-Up",
+    "Community Plots",
+    "Curate & Tag",
+    "Read & React",
+    "Earn Quills",
+    "Keep a Streak",
+    "No AI Ever",
+    "No Follower Counts"
+  ],
+  "ctaTitle": "Ready to pick up the pen?",
+  "ctaSubtitle": "No account needed. Your first warm-up takes five minutes.",
+  "ctaButton": "Start Writing",
+  "url": "halfquill.com"
+}

@@ -1,0 +1,73 @@
+{
+  "brandName": "Real Sight Reader",
+  "logo": "https://realsightreader.com/icon-512.png",
+  "brandWordmark": "Real Sight Reader",
+  "logoHasWordmark": false,
+  "logoWidth": 300,
+  "primary": "#5B6CF0",
+  "primaryDark": "#3A47B8",
+  "accent": "#93A0FF",
+  "bg": "#0A0B14",
+  "text": "#FFFFFF",
+  "watermark": {
+    "enabled": true,
+    "label": "videoapihub.com"
+  },
+  "promo": {
+    "enabled": true,
+    "badge": "MADE IN UNDER A MINUTE",
+    "title": "This video was created in under a minute",
+    "highlight": "minute",
+    "brand": "videoapihub.com",
+    "cta": "Try it today — free",
+    "url": "videoapihub.com"
+  },
+  "eyebrow": "MUSIC PRACTICE",
+  "headline": "Your repertoire is the curriculum",
+  "subheadline": "Sight-read the music you actually play — drill notes, rhythm, intervals, and harmony right in your browser. Free, no account.",
+  "screens": [
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "NOTE READING",
+      "title": "Name every pitch as it scrolls",
+      "subtitle": "Play or name each note as the score scrolls past — single line or both hands — scored note by note.",
+      "chips": ["Single line", "Both hands", "Scored"],
+      "stats": [{ "value": 100, "label": "Note accuracy", "suffix": "%" }]
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "RHYTHM TRAINER",
+      "title": "Tap along, bar by bar",
+      "subtitle": "Tap in time with the beat and see exactly where you rushed or dragged, measure by measure.",
+      "chips": ["Tempo", "Timing", "Feedback"],
+      "hotspot": { "x": 0.6, "y": 0.32, "label": "On the beat" }
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.5,
+      "eyebrow": "YOUR SCORES",
+      "title": "Import any score you own",
+      "subtitle": "Bring any MusicXML from your notation app, or start from the bundled classical library.",
+      "chips": ["MusicXML", ".mxl", "Classical library"]
+    }
+  ],
+  "features": [
+    "Note Reading",
+    "Rhythm Trainer",
+    "Intervals",
+    "Harmony",
+    "MusicXML Import",
+    "Classical Library",
+    "In Browser",
+    "Free, No Account"
+  ],
+  "ctaTitle": "Start sight-reading today",
+  "ctaSubtitle": "Free, no account — right in your browser.",
+  "ctaButton": "Start practicing",
+  "url": "realsightreader.com"
+}

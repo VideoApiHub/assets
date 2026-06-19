@@ -21,8 +21,12 @@ import WealthMinute09, { minute09Defaults } from './WealthMinute09';
 import WealthMinute10, { minute10Defaults } from './WealthMinute10';
 import WealthMinute11, { minute11Defaults } from './WealthMinute11';
 import WealthMinute12, { minute12Defaults } from './WealthMinute12';
-import SaasDemo, { pillarDemoDefaults, getSaasDemoDuration } from './SaasDemo';
+import SaasDemo, { pillarDemoDefaults, getSaasDemoDuration, type SaasDemoProps } from './SaasDemo';
 import { guardianGazeDemo } from './saas-demo-props/guardian-gaze';
+import halfquillDemo from './saas-demo-props/halfquill.json';
+import mealtimevideoDemo from './saas-demo-props/mealtimevideo.json';
+import realsightreaderDemo from './saas-demo-props/realsightreader.json';
+import appvideostudioDemo from './saas-demo-props/appvideostudio.json';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -262,6 +266,54 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={guardianGazeDemo}
         calculateMetadata={({ props }) => ({
           durationInFrames: getSaasDemoDuration(props as typeof guardianGazeDemo),
+        })}
+      />
+      <Composition
+        id="SaasDemoHalfQuill"
+        component={SaasDemo}
+        durationInFrames={getSaasDemoDuration(halfquillDemo as SaasDemoProps)}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={halfquillDemo as SaasDemoProps}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getSaasDemoDuration(props as SaasDemoProps),
+        })}
+      />
+      <Composition
+        id="SaasDemoMealTimeVideo"
+        component={SaasDemo}
+        durationInFrames={getSaasDemoDuration(mealtimevideoDemo as SaasDemoProps)}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={mealtimevideoDemo as SaasDemoProps}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getSaasDemoDuration(props as SaasDemoProps),
+        })}
+      />
+      <Composition
+        id="SaasDemoRealSightReader"
+        component={SaasDemo}
+        durationInFrames={getSaasDemoDuration(realsightreaderDemo as SaasDemoProps)}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={realsightreaderDemo as SaasDemoProps}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getSaasDemoDuration(props as SaasDemoProps),
+        })}
+      />
+      <Composition
+        id="SaasDemoAppVideoStudio"
+        component={SaasDemo}
+        durationInFrames={getSaasDemoDuration(appvideostudioDemo as SaasDemoProps)}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={appvideostudioDemo as SaasDemoProps}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getSaasDemoDuration(props as SaasDemoProps),
         })}
       />
     </>
