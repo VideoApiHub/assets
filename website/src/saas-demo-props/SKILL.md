@@ -1,6 +1,6 @@
 ---
 name: saas-demo-props
-description: Generate a SaasDemoProps config object for the reusable Remotion SaaS Demo template (website/src/SaasDemo.tsx). Use when the user wants a product demo video for a new SaaS — you only need this file, not the component source.
+description: Generate a SaasDemoProps config (a JSON file by default, or a typed .tsx module on request) for the reusable Remotion SaaS Demo template (website/src/SaasDemo.tsx). Use when the user wants a product demo video for a new SaaS — you only need this file, not the component source.
 allowed-tools: Read, Write, Edit, Glob, AskUserQuestion
 ---
 
@@ -24,9 +24,24 @@ automatically from the number of screens — never hardcode it.
 
 ## Output format
 
-Produce a `.tsx` (or `.ts`) module that exports a `SaasDemoProps` object. Assets referenced
-by path live under `website/public/` (e.g. `'saas/<brand>/logo.png'` → `public/saas/<brand>/logo.png`).
+Produce a **`.json`** file (preferred) containing the `SaasDemoProps` object, saved as
+`website/src/saas-demo-props/<brand>.json`. Plain JSON keeps the config data-only,
+portable and easy to feed into a render API. Assets referenced by path live under
+`website/public/` (e.g. `'saas/<brand>/logo.png'` → `public/saas/<brand>/logo.png`).
 Images may also be a full `https://…` URL or a `data:`/`blob:` URI.
+
+```json
+{
+  "brandName": "Acme",
+  "logo": "saas/acme/logo-white.png"
+}
+```
+
+JSON rules: double-quoted keys/strings, no comments, no trailing commas, and write
+numeric `aspect` as a decimal (e.g. `1.7777`) since JSON has no expressions like `1440 / 900`.
+
+If the user explicitly wants a typed TS module instead, emit a `.tsx`/`.ts` file that
+exports the object:
 
 ```ts
 import type { SaasDemoProps } from '../SaasDemo';
@@ -35,8 +50,15 @@ export const acmeDemo: SaasDemoProps = { /* …generated… */ };
 ```
 
 To register it for rendering, the user adds a `<Composition>` in their Remotion Root using
-`getSaasDemoDuration(props)` for `durationInFrames` (1920×1080, fps 30). Mention this but
+`getSaasDemoDuration(props)` for `durationInFrames` (1920×1080, fps 30). JSON props can be
+imported directly (`import acme from './saas-demo-props/acme.json'`). Mention this but
 don't invent file paths you haven't confirmed.
+
+### Placeholder screenshots
+
+If real screenshots aren't supplied, generate **PNG placeholders** under
+`website/public/saas/<brand>/` so every `screen.image` path resolves. Match each
+placeholder's real pixel dimensions to the `aspect` you declare (e.g. 1600×900 → `1.7777`).
 
 ---
 
@@ -117,9 +139,11 @@ type SaasDemoProps = {
 
 ## Authoring rules (follow these for a premium result)
 
-1. **`aspect` must be real.** It is `width / height` of the actual screenshot. Getting this
-   wrong stretches the image. If you don't know the real dimensions, tell the user to confirm,
-   or read the file dimensions — never guess silently.
+1. **`aspect` must be real.** It is `width / height` of the actual screenshot, written as a
+   plain decimal in JSON (e.g. `1.7777` for 1600×900). Getting this wrong stretches the image.
+   If you don't know the real dimensions, tell the user to confirm, or read the file
+   dimensions — never guess silently. When you generate placeholder PNGs, size them to match
+   the `aspect` you declare.
 2. **`logo` is the light/white version** — it sits on a dark background. If only a colored logo
    exists, say so.
 3. **Colors:** `bg` should be dark (near-black, slightly tinted toward the brand). `primary` is the
@@ -150,89 +174,93 @@ If the user gives a website, you may fetch it to infer copy/colors, then confirm
 
 ---
 
-## Minimal valid example
+## Minimal valid example (JSON)
 
-```ts
-import type { SaasDemoProps } from '../SaasDemo';
-
-export const acmeDemo: SaasDemoProps = {
-  brandName: 'Acme',
-  logo: 'saas/acme/logo-white.png',
-  primary: '#5B8DEF',
-  primaryDark: '#3E6BC4',
-  bg: '#0A0E1A',
-  text: '#FFFFFF',
-  accent: '#9DBDF7',
-  brandWordmark: 'Acme',          // omit + set logoHasWordmark:true if logo has the name
-  watermark: { enabled: true, label: 'videoapihub.com' },
-  eyebrow: 'ANALYTICS PLATFORM',
-  headline: 'Turn raw events into decisions',
-  subheadline: 'Real-time dashboards your whole team can actually understand.',
-  screens: [
+```json
+{
+  "brandName": "Acme",
+  "logo": "saas/acme/logo-white.png",
+  "primary": "#5B8DEF",
+  "primaryDark": "#3E6BC4",
+  "bg": "#0A0E1A",
+  "text": "#FFFFFF",
+  "accent": "#9DBDF7",
+  "brandWordmark": "Acme",
+  "watermark": { "enabled": true, "label": "videoapihub.com" },
+  "eyebrow": "ANALYTICS PLATFORM",
+  "headline": "Turn raw events into decisions",
+  "subheadline": "Real-time dashboards your whole team can actually understand.",
+  "screens": [
     {
-      image: 'saas/acme/dashboard.png',
-      device: 'desktop',
-      aspect: 1440 / 900,
-      eyebrow: 'OVERVIEW',
-      title: 'Every metric, one screen',
-      subtitle: 'Live KPIs, trends and alerts the moment they happen.',
-      chips: ['Realtime', 'Custom KPIs', 'Alerts'],
-      hotspot: { x: 0.3, y: 0.25, label: 'Live users' },
-      stats: [
-        { value: 1240000, label: 'Events / day' },
-        { value: 99.9, label: 'Uptime', suffix: '%', decimals: 1 },
-      ],
+      "image": "saas/acme/dashboard.png",
+      "device": "desktop",
+      "aspect": 1.6,
+      "eyebrow": "OVERVIEW",
+      "title": "Every metric, one screen",
+      "subtitle": "Live KPIs, trends and alerts the moment they happen.",
+      "chips": ["Realtime", "Custom KPIs", "Alerts"],
+      "hotspot": { "x": 0.3, "y": 0.25, "label": "Live users" },
+      "stats": [
+        { "value": 1240000, "label": "Events / day" },
+        { "value": 99.9, "label": "Uptime", "suffix": "%", "decimals": 1 }
+      ]
     },
     {
-      image: 'saas/acme/mobile.png',
-      device: 'phone',
-      aspect: 420 / 900,
-      eyebrow: 'ON THE GO',
-      title: 'Your numbers in your pocket',
-      subtitle: 'Push alerts and dashboards on any device.',
-      chips: ['Push alerts', 'Offline', 'PWA'],
+      "image": "saas/acme/mobile.png",
+      "device": "phone",
+      "aspect": 0.4667,
+      "eyebrow": "ON THE GO",
+      "title": "Your numbers in your pocket",
+      "subtitle": "Push alerts and dashboards on any device.",
+      "chips": ["Push alerts", "Offline", "PWA"]
     },
     {
-      image: 'saas/acme/reports.png',
-      device: 'desktop',
-      aspect: 1440 / 900,
-      eyebrow: 'REPORTING',
-      title: 'Share insight in one click',
-      subtitle: 'Scheduled reports exported to PDF or CSV.',
-      chips: ['PDF / CSV', 'Scheduled', 'Shareable'],
-    },
+      "image": "saas/acme/reports.png",
+      "device": "desktop",
+      "aspect": 1.6,
+      "eyebrow": "REPORTING",
+      "title": "Share insight in one click",
+      "subtitle": "Scheduled reports exported to PDF or CSV.",
+      "chips": ["PDF / CSV", "Scheduled", "Shareable"]
+    }
   ],
-  features: [
-    'Realtime Streams',
-    'Custom Dashboards',
-    'Smart Alerts',
-    'Team Sharing',
-    'Data Export',
-    'API Access',
-    'Role Permissions',
-    'White-Label',
+  "features": [
+    "Realtime Streams",
+    "Custom Dashboards",
+    "Smart Alerts",
+    "Team Sharing",
+    "Data Export",
+    "API Access",
+    "Role Permissions",
+    "White-Label"
   ],
-  ctaTitle: 'Start free for 14 days',
-  ctaSubtitle: 'No credit card required.',
-  ctaButton: 'Get started',
-  url: 'acme.com',
-  promo: {
-    enabled: true,
-    badge: 'MADE IN UNDER A MINUTE',
-    title: 'This video was created in under a minute',
-    highlight: 'minute',
-    brand: 'videoapihub.com',
-    cta: 'Try it today — free',
-    url: 'videoapihub.com',
-  },
-};
+  "ctaTitle": "Start free for 14 days",
+  "ctaSubtitle": "No credit card required.",
+  "ctaButton": "Get started",
+  "url": "acme.com",
+  "promo": {
+    "enabled": true,
+    "badge": "MADE IN UNDER A MINUTE",
+    "title": "This video was created in under a minute",
+    "highlight": "minute",
+    "brand": "videoapihub.com",
+    "cta": "Try it today — free",
+    "url": "videoapihub.com"
+  }
+}
 ```
+
+> `aspect` is `width / height` pre-computed as a decimal (`1440/900 → 1.6`,
+> `420/900 → 0.4667`). Set `logoHasWordmark: true` and drop `brandWordmark` when the
+> logo image already contains the brand name.
 
 ---
 
 ## Checklist before you hand off
 
-- [ ] Every `screen.aspect` matches the real screenshot dimensions
+- [ ] Output is valid JSON (double quotes, no comments, no trailing commas) unless TS was requested
+- [ ] Every `screen.aspect` matches the real screenshot dimensions (decimal in JSON)
+- [ ] Placeholder PNGs created for any missing `screen.image` paths, sized to the declared aspect
 - [ ] `logo` is the light/white variant; `logoHasWordmark`/`brandWordmark` set correctly
 - [ ] `primary`/`accent` readable on `bg`; `accent` is a lighter tint of `primary`
 - [ ] 3–5 screens; `stats`/`hotspot` only on the strongest 1–2

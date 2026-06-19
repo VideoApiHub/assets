@@ -1,0 +1,78 @@
+{
+  "brandName": "nuzur",
+  "logo": "https://nuzur.com/nuzur-logo.svg",
+  "logoHasWordmark": true,
+  "logoWidth": 420,
+  "primary": "#1E88E5",
+  "primaryDark": "#1565C0",
+  "accent": "#64B5F6",
+  "bg": "#081220",
+  "text": "#FFFFFF",
+  "watermark": {
+    "enabled": true,
+    "label": "videoapihub.com"
+  },
+  "promo": {
+    "enabled": true,
+    "badge": "MADE IN UNDER A MINUTE",
+    "title": "This video was created in under a minute",
+    "highlight": "minute",
+    "brand": "videoapihub.com",
+    "cta": "Try it today — free",
+    "url": "videoapihub.com"
+  },
+  "eyebrow": "BACKEND CODE GENERATION",
+  "headline": "Model your data. Generate the whole backend.",
+  "subheadline": "Keep your schema as the source of truth — change the model and nuzur regenerates SQL migrations, Protobuf and Go server code, kept in sync as it evolves.",
+  "screens": [
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.7777,
+      "eyebrow": "VISUAL EDITOR",
+      "title": "Model your systems visually",
+      "subtitle": "Drag-and-drop editing with nested JSON structures, extended field types and validations — versioned with change-request reviews.",
+      "chips": ["Drag & drop", "Nested JSON", "Change requests"],
+      "hotspot": { "x": 0.62, "y": 0.28, "label": "Linked entities" },
+      "stats": [
+        { "value": 100, "label": "Type-safe models", "suffix": "%" },
+        { "value": 0, "label": "Boilerplate written" }
+      ]
+    },
+    {
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "device": "desktop",
+      "aspect": 1.7777,
+      "eyebrow": "CODE GENERATION",
+      "title": "Generate migrations, APIs and servers",
+      "subtitle": "Stop writing boilerplate — nuzur produces SQL migrations, Protobuf definitions and Go gRPC server code, re-generated on every schema change.",
+      "chips": ["SQL migrations", "Protobuf", "Go gRPC server"],
+      "stats": [{ "value": 3, "label": "Outputs per change" }]
+    },
+    {
+      "image": "saas/nuzur/data-manager.png",
+      "device": "desktop",
+      "aspect": 1.7777,
+      "eyebrow": "DATA MANAGER",
+      "title": "Manage data and connect your AI",
+      "subtitle": "Query datasets with field-level validation, pair local MySQL or PostgreSQL via the local agent, and connect Claude or Cursor over MCP.",
+      "chips": ["Field validation", "Local agent", "MCP connector"],
+      "hotspot": { "x": 0.78, "y": 0.16, "label": "MCP connected" },
+      "stats": [{ "value": 1, "label": "Source of truth" }]
+    }
+  ],
+  "features": [
+    "Visual Schema Editor",
+    "SQL Migrations",
+    "Protobuf Definitions",
+    "Go gRPC Server",
+    "Data Manager",
+    "Local Agent",
+    "MCP Connector",
+    "Team Collaboration"
+  ],
+  "ctaTitle": "Model once. Generate the rest.",
+  "ctaSubtitle": "Free for personal use — no credit card required.",
+  "ctaButton": "Get Started",
+  "url": "nuzur.com"
+}
