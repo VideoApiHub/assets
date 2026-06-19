@@ -1,14 +1,14 @@
 {
   "brandName": "Real Sight Reader",
   "logo": "https://realsightreader.com/icon-512.png",
-  "brandWordmark": "Real Sight Reader",
+  "brandWordmark": "Real Sight",
   "logoHasWordmark": false,
   "logoWidth": 300,
-  "primary": "#5B6CF0",
-  "primaryDark": "#3A47B8",
-  "accent": "#93A0FF",
-  "bg": "#0A0B14",
-  "text": "#FFFFFF",
+  "primary": "#2F6F4F",
+  "primaryDark": "#1E4D36",
+  "accent": "#7FAF8F",
+  "bg": "#2F6F4F",
+  "text": "#ffffff",
   "watermark": {
     "enabled": true,
     "label": "videoapihub.com"
@@ -27,31 +27,28 @@
   "subheadline": "Sight-read the music you actually play — drill notes, rhythm, intervals, and harmony right in your browser. Free, no account.",
   "screens": [
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
-      "device": "desktop",
-      "aspect": 1.5,
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/realsight/realsight1.png",
+      "device": "mobile",
+      "aspect": 0.6,
       "eyebrow": "NOTE READING",
-      "title": "Name every pitch as it scrolls",
-      "subtitle": "Play or name each note as the score scrolls past — single line or both hands — scored note by note.",
-      "chips": ["Single line", "Both hands", "Scored"],
-      "stats": [{ "value": 100, "label": "Note accuracy", "suffix": "%" }]
+      "title": "Read The Notes",
+      "subtitle": "Name or play each pitch as the score scrolls — single line or both hands — scored note by note."
     },
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
-      "device": "desktop",
-      "aspect": 1.5,
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/realsight/realsight2.png",
+  "device": "mobile",
+      "aspect": 0.6,
       "eyebrow": "RHYTHM TRAINER",
       "title": "Tap along, bar by bar",
       "subtitle": "Tap in time with the beat and see exactly where you rushed or dragged, measure by measure.",
-      "chips": ["Tempo", "Timing", "Feedback"],
-      "hotspot": { "x": 0.6, "y": 0.32, "label": "On the beat" }
+      "chips": ["Tempo", "Timing", "Feedback"]
     },
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
-      "device": "desktop",
-      "aspect": 1.5,
-      "eyebrow": "YOUR SCORES",
-      "title": "Import any score you own",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/realsight/realsight3.png",
+      "device": "mobile",
+      "aspect": 0.6,
+      "eyebrow": "Bring your own music",
+      "title": "Import any music",
       "subtitle": "Bring any MusicXML from your notation app, or start from the bundled classical library.",
       "chips": ["MusicXML", ".mxl", "Classical library"]
     }
