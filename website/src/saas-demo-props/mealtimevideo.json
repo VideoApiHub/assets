@@ -1,7 +1,7 @@
 {
   "brandName": "MealTimeVideo",
   "logo": "https://mealtimevideo.com/mealtimewatch.svg",
-  "brandWordmark": "MealTimeVideo",
+  "brandWordmark": "MealTime",
   "logoHasWordmark": false,
   "logoWidth": 300,
   "primary": "#FF6B35",
@@ -27,7 +27,7 @@
   "subheadline": "A community platform for discovering and sharing the best YouTube videos to enjoy during your meal.",
   "screens": [
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/mealtime/mealtime1.png",
       "device": "desktop",
       "aspect": 1.5,
       "eyebrow": "FOR YOU",
@@ -37,7 +37,7 @@
       "stats": [{ "value": 12, "label": "Categories" }]
     },
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/mealtime/mealtime2.png",
       "device": "desktop",
       "aspect": 1.5,
       "eyebrow": "JUST THE RIGHT LENGTH",
@@ -47,7 +47,7 @@
       "hotspot": { "x": 0.74, "y": 0.18, "label": "Length filter" }
     },
     {
-      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/dummy/dummy_laptop.png",
+      "image": "https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/saas/mealtime/mealtime3.png",
       "device": "desktop",
       "aspect": 1.5,
       "eyebrow": "BUILD YOUR LIST",
