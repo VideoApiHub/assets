@@ -1,1449 +1,525 @@
 import React from 'react';
 import {
   AbsoluteFill,
-  Img,
-  Sequence,
-  interpolate,
   spring,
+  interpolate,
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
 
-const FONT = 'Space Grotesk';
+const ACCENT = '#2563EB';
+const BACKDROP = '#040712';
+const PANEL = 'rgba(7, 13, 28, 0.76)';
+const BORDER = 'rgba(148, 163, 184, 0.18)';
+const FONT = 'Inter, "Segoe UI", Arial, sans-serif';
 
-// Load Google Font
-const fontLink = `https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap`;
+const CARD_LABELS = ['Testing', 'Automation', 'GenAI', 'Agents', 'Scale'];
 
-const FontLoader = () => (
-  <style dangerouslySetInnerHTML={{ __html: `@import url('${fontLink}');` }} />
-);
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-/*
-VIDEO SETTINGS
-1080 x 1920 (9:16)
-30 FPS
-*/
+const glowStyle = (color: string, intensity = 1) => ({
+  boxShadow: `0 0 ${18 * intensity}px ${color}, 0 0 ${36 * intensity}px rgba(37, 99, 235, 0.18)`,
+});
 
-type Winner = 'left' | 'right' | 'neutral';
-type Spec = [string, string, string, Winner];
-type Section = { title: string; emoji: string; specs: Spec[] };
-type PhoneInfo = { name: string; short: string; color: string; image: string };
+function buildParticles(frame: number) {
+  return Array.from({ length: 28 }, (_, index) => {
+    const time = frame / 24 + index * 0.18;
+    const angle = time * 0.9 + (index % 5) * 0.5;
+    const radius = 160 + (index % 7) * 50 + (index % 3) * 35;
+    const drift = (index % 2 === 0 ? 1 : -1) * (20 + (index % 4) * 10);
+    const x = 960 + Math.cos(angle) * radius + Math.sin(time * 0.5 + index) * drift;
+    const y = 540 + Math.sin(angle * 1.2) * (radius * 0.6) + Math.cos(time * 0.6 + index) * 24;
+    const size = 2 + (index % 4) * 1.4;
+    const opacity = 0.15 + (index % 5) * 0.04 + Math.sin(time * 1.2 + index) * 0.06;
+    const hue = index % 3 === 0 ? 'rgba(37,99,235,' : index % 3 === 1 ? 'rgba(56,189,248,' : 'rgba(129,140,248,';
 
-interface ComparisonConfig {
-  left: PhoneInfo;
-  right: PhoneInfo;
-  intro: {
-    tagline: string;
-    subtitle: string;
-  };
-  sections: Section[];
-  verdict: {
-    title: string;
-    leftSummary: string;
-    rightSummary: string;
-    cta: string;
-  };
-  framesPerSection: number;
-  finalSlideDuration: number;
+    return { x, y, size, opacity, color: hue, index };
+  });
 }
 
-const config: ComparisonConfig = {
-  left: {
-    name: 'iPhone 17 Pro Max',
-    short: 'iPhone',
-    color: '#89A7FF',
-    image: 'https://m.media-amazon.com/images/I/71MXmswILHL._SX679_.jpg',
-  },
-  right: {
-    name: 'Galaxy S26 Ultra',
-    short: 'Galaxy',
-    color: '#00D2FF',
-    image: 'https://m.media-amazon.com/images/I/41lljoZVf0L._SY300_SX300_QL70_FMwebp_.jpg',
-  },
-  intro: {
-    tagline: 'THE ULTIMATE SHOWDOWN',
-    subtitle: 'Which flagship reigns supreme in 2025?',
-  },
-  sections: [
-    {
-      title: 'Design & Build',
-      emoji: '🏗️',
-      specs: [
-        ['⚖️   Weight', '221g', '233g', 'left'],
-        ['📏   Thickness', '8.2mm', '8.8mm', 'left'],
-        ['🧱   Materials', 'Titanium', 'Armor Aluminum', 'neutral'],
-        ['💧   IP Rating', 'IP68', 'IP68', 'neutral'],
-        ['🤲   In-hand Feel', 'Balanced', 'Large Feel', 'left'],
-      ],
-    },
-    {
-      title: 'Display',
-      emoji: '🖥️',
-      specs: [
-        ['☀️   Brightness', '3000 nits', '3200 nits', 'right'],
-        ['🔄   Refresh Rate', '120Hz', '144Hz', 'right'],
-        ['🎨   HDR', 'Dolby Vision', 'HDR10+', 'neutral'],
-        ['📐   Bezels', 'Ultra Thin', 'Thin', 'left'],
-        ['👆   Touch Response', 'Excellent', 'Excellent', 'neutral'],
-      ],
-    },
-    {
-      title: 'Performance',
-      emoji: '⚡',
-      specs: [
-        ['🧠   Processor', 'A19 Pro', 'Snapdragon Elite', 'neutral'],
-        ['🎮   Gaming', 'Excellent', 'Excellent+', 'right'],
-        ['🌡️   Thermals', 'Efficient', 'Cooler', 'right'],
-        ['⚙️   Optimization', 'Best', 'Great', 'left'],
-        ['📊   Benchmarks', 'Top Tier', 'Top Tier', 'neutral'],
-      ],
-    },
-    {
-      title: 'Camera',
-      emoji: '📸',
-      specs: [
-        ['🎬   Video', 'Best-in-Class', 'Excellent', 'left'],
-        ['🔭   Zoom', '5x', '10x', 'right'],
-        ['🌙   Low Light', 'Excellent', 'Excellent', 'neutral'],
-        ['📹   Stabilization', 'Best', 'Very Good', 'left'],
-        ['🤳   Selfie', 'Natural', 'Sharper', 'neutral'],
-      ],
-    },
-    {
-      title: 'Battery',
-      emoji: '🔋',
-      specs: [
-        ['⚡   Charging', '45W', '80W', 'right'],
-        ['📡   Wireless', 'MagSafe', 'Qi2', 'neutral'],
-        ['🕐   Battery Life', 'All Day+', 'Heavy Usage', 'right'],
-        ['🔁   Reverse Charge', 'No', 'Yes', 'right'],
-        ['⚙️   Optimization', 'Excellent', 'Great', 'left'],
-      ],
-    },
-  ],
-  verdict: {
-    title: 'Who Takes\nThe Crown?',
-    leftSummary: 'Ecosystem, optimization & cinematic video',
-    rightSummary: 'Charging, zoom, AI & gaming versatility',
-    cta: 'COMMENT YOUR WINNER 👇',
-  },
-  framesPerSection: 110,
-  finalSlideDuration: 120,
-};
-
-const { left: leftPhone, right: rightPhone, sections } = config;
-
-const winnerColor = '#22C55E';
-
-// Tally wins from all sections
-const countWins = () => {
-  let leftWins = 0;
-  let rightWins = 0;
-  let ties = 0;
-  for (const section of config.sections) {
-    for (const spec of section.specs) {
-      if (spec[3] === 'left') leftWins++;
-      else if (spec[3] === 'right') rightWins++;
-      else ties++;
-    }
-  }
-  return { leftWins, rightWins, ties };
-};
-
-const Background = () => {
-  const frame = useCurrentFrame();
-
-  // Neon pulse intensity
-  const pulse1 = 0.3 + Math.sin(frame / 20) * 0.15;
-  const pulse2 = 0.25 + Math.cos(frame / 15) * 0.12;
-  const pulse3 = 0.2 + Math.sin(frame / 25 + 1) * 0.1;
-
-  // Horizontal neon lines that travel
-  const neonLines = [
-    { y: 180, color: '0,210,255', speed: 2, width: 350, delay: 0 },
-    { y: 480, color: '139,92,246', speed: -1.5, width: 280, delay: 30 },
-    { y: 780, color: '0,210,255', speed: 1.8, width: 320, delay: 60 },
-    { y: 1080, color: '236,72,153', speed: -2.2, width: 260, delay: 10 },
-    { y: 1380, color: '139,92,246', speed: 1.6, width: 300, delay: 45 },
-    { y: 1700, color: '0,210,255', speed: -1.9, width: 340, delay: 20 },
-  ];
-
-  // Vertical neon accents
-  const vertLines = [
-    { x: 80, color: '139,92,246', speed: 3, height: 200, delay: 0 },
-    { x: 1000, color: '0,210,255', speed: -2.5, height: 180, delay: 25 },
-    { x: 540, color: '236,72,153', speed: 2, height: 240, delay: 50 },
-  ];
-
-  // Neon particles
-  const particles = Array.from({ length: 12 }, (_, i) => {
-    const angle = (frame / (30 + i * 5) + i * 0.52) % (Math.PI * 2);
-    const radius = 200 + i * 60;
-    const cx = 540 + Math.cos(angle) * radius * 0.6;
-    const cy = 960 + Math.sin(angle) * radius;
-    const size = 3 + Math.sin(frame / 10 + i) * 2;
-    const colors = ['0,210,255', '139,92,246', '236,72,153'];
-    const color = colors[i % 3];
-    const opacity = 0.3 + Math.sin(frame / 8 + i * 2) * 0.2;
-    return { cx, cy, size, color, opacity, i };
+function useSpring(frame: number, fps: number, offset = 0, stiffness = 140, damping = 14) {
+  return spring({
+    frame: frame - offset,
+    fps,
+    config: { stiffness, damping },
   });
+}
+
+function SceneBackground() {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const pulse = 0.45 + Math.sin(frame / 24) * 0.1;
+  const sweep = interpolate(frame, [0, 180, 450], [0, 1, 0.1], { extrapolateRight: 'clamp' });
+  const parallaxX = interpolate(frame, [0, 160, 450], [0, 18, 36]);
 
   return (
-    <AbsoluteFill
-      style={{
-        background: '#05000a',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Deep neon ambient glow */}
+    <AbsoluteFill style={{ background: `linear-gradient(135deg, ${BACKDROP} 0%, #020617 45%, #030712 100%)`, overflow: 'hidden' }}>
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: `
-            radial-gradient(ellipse at 30% 20%, rgba(0,210,255,${pulse1 * 0.12}) 0%, transparent 50%),
-            radial-gradient(ellipse at 70% 80%, rgba(139,92,246,${pulse2 * 0.12}) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(236,72,153,${pulse3 * 0.06}) 0%, transparent 60%)
-          `,
+          background: `radial-gradient(circle at 30% 20%, rgba(37, 99, 235, ${0.12 + pulse * 0.12}) 0, transparent 35%), radial-gradient(circle at 70% 35%, rgba(56, 189, 248, ${0.08 + pulse * 0.06}) 0, transparent 28%), radial-gradient(circle at 50% 80%, rgba(99, 102, 241, ${0.18 + pulse * 0.08}) 0, transparent 32%)`,
         }}
       />
-
-      {/* Horizontal neon streaks */}
-      {neonLines.map((line, i) => {
-        const xPos = ((frame + line.delay) * line.speed * 4) % 1600 - 400;
-        const glow = 0.3 + Math.sin((frame + line.delay) / 12) * 0.15;
-        return (
-          <div
-            key={`nh-${i}`}
-            style={{
-              position: 'absolute',
-              top: line.y,
-              left: xPos,
-              width: line.width,
-              height: 2,
-              background: `linear-gradient(90deg, transparent, rgba(${line.color},${glow}), rgba(${line.color},${glow * 1.5}), rgba(${line.color},${glow}), transparent)`,
-              boxShadow: `0 0 12px rgba(${line.color},${glow * 0.6}), 0 0 30px rgba(${line.color},${glow * 0.3})`,
-              borderRadius: 2,
-            }}
-          />
-        );
-      })}
-
-      {/* Vertical neon streaks */}
-      {vertLines.map((line, i) => {
-        const yPos = ((frame + line.delay) * line.speed * 3) % 2200 - 300;
-        const glow = 0.25 + Math.sin((frame + line.delay) / 14) * 0.12;
-        return (
-          <div
-            key={`nv-${i}`}
-            style={{
-              position: 'absolute',
-              left: line.x,
-              top: yPos,
-              width: 2,
-              height: line.height,
-              background: `linear-gradient(180deg, transparent, rgba(${line.color},${glow}), rgba(${line.color},${glow * 1.5}), rgba(${line.color},${glow}), transparent)`,
-              boxShadow: `0 0 10px rgba(${line.color},${glow * 0.5}), 0 0 25px rgba(${line.color},${glow * 0.25})`,
-              borderRadius: 2,
-            }}
-          />
-        );
-      })}
-
-      {/* Neon hexagon outlines */}
-      {[0, 1, 2].map((i) => {
-        const cx = [200, 880, 540][i];
-        const cy = [400, 1200, 1700][i];
-        const size = [120, 100, 140][i];
-        const rot = frame / (3 + i) + i * 60;
-        const colors = ['0,210,255', '139,92,246', '236,72,153'];
-        const opacity = 0.08 + Math.sin(frame / 18 + i * 2) * 0.04;
-        return (
-          <div
-            key={`hex-${i}`}
-            style={{
-              position: 'absolute',
-              left: cx - size / 2,
-              top: cy - size / 2,
-              width: size,
-              height: size,
-              border: `1px solid rgba(${colors[i]},${opacity})`,
-              borderRadius: 12,
-              transform: `rotate(${rot}deg)`,
-              boxShadow: `0 0 15px rgba(${colors[i]},${opacity * 0.5}), inset 0 0 15px rgba(${colors[i]},${opacity * 0.3})`,
-            }}
-          />
-        );
-      })}
-
-      {/* Floating neon particles */}
-      {particles.map((p) => (
+      <div
+        style={{
+          position: 'absolute',
+          left: -100 + parallaxX,
+          top: 0,
+          width: width + 200,
+          height: height,
+          background: `linear-gradient(90deg, rgba(37, 99, 235, ${0.03 + sweep * 0.05}) 0, transparent 18%, transparent 82%, rgba(56, 189, 248, ${0.03 + sweep * 0.05}) 100%)`,
+          filter: 'blur(40px)',
+          opacity: 0.5,
+        }}
+      />
+      {buildParticles(frame).map((particle) => (
         <div
-          key={`np-${p.i}`}
+          key={`particle-${particle.index}`}
           style={{
             position: 'absolute',
-            left: p.cx,
-            top: p.cy,
-            width: p.size,
-            height: p.size,
-            borderRadius: '50%',
-            background: `rgba(${p.color},${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 3}px rgba(${p.color},${p.opacity * 0.8}), 0 0 ${p.size * 6}px rgba(${p.color},${p.opacity * 0.3})`,
+            left: particle.x,
+            top: particle.y,
+            width: particle.size,
+            height: particle.size,
+            borderRadius: '999px',
+            background: `${particle.color}${particle.opacity})`,
+            filter: 'blur(0.4px)',
+            ...glowStyle(ACCENT, 0.65),
           }}
         />
       ))}
-
-      {/* Center neon cross-hair */}
       <div
         style={{
           position: 'absolute',
-          top: 0,
-          left: 539,
-          width: 2,
-          height: '100%',
-          background: `linear-gradient(180deg, transparent 0%, rgba(139,92,246,${0.04 + Math.sin(frame / 20) * 0.02}) 30%, rgba(139,92,246,${0.04 + Math.sin(frame / 20) * 0.02}) 70%, transparent 100%)`,
+          inset: 0,
+          border: `1px solid rgba(148, 163, 184, ${0.08 + pulse * 0.02})`,
         }}
       />
-
-      {/* Edge neon glow - left */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: 3,
-          height: '100%',
-          background: `linear-gradient(180deg, transparent, rgba(0,210,255,${pulse1 * 0.25}), transparent 40%, transparent 60%, rgba(139,92,246,${pulse2 * 0.2}), transparent)`,
-          boxShadow: `3px 0 20px rgba(0,210,255,${pulse1 * 0.1})`,
-        }}
-      />
-
-      {/* Edge neon glow - right */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: 3,
-          height: '100%',
-          background: `linear-gradient(180deg, transparent, rgba(139,92,246,${pulse2 * 0.25}), transparent 40%, transparent 60%, rgba(0,210,255,${pulse1 * 0.2}), transparent)`,
-          boxShadow: `-3px 0 20px rgba(139,92,246,${pulse2 * 0.1})`,
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
-const IntroSlide = () => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-
-  // Tagline drops in
-  const taglinePop = spring({
-    frame,
-    fps,
-    config: { damping: 14, stiffness: 120 },
-  });
-
-  // Left phone slides in from left
-  const leftSlide = spring({
-    frame: frame - 10,
-    fps,
-    config: { damping: 14, stiffness: 80 },
-  });
-
-  // Right phone slides in from right
-  const rightSlide = spring({
-    frame: frame - 15,
-    fps,
-    config: { damping: 14, stiffness: 80 },
-  });
-
-  // VS badge explodes in
-  const vsPop = spring({
-    frame: frame - 25,
-    fps,
-    config: { damping: 10, stiffness: 140 },
-  });
-
-  // Names reveal
-  const namesReveal = spring({
-    frame: frame - 35,
-    fps,
-    config: { damping: 12, stiffness: 100 },
-  });
-
-  // Subtitle fades in
-  const subtitleReveal = spring({
-    frame: frame - 50,
-    fps,
-    config: { damping: 14, stiffness: 80 },
-  });
-
-  // Pulsing glow on VS
-  const vsGlow = 15 + Math.sin(frame / 8) * 10;
-
-  const leftX = interpolate(leftSlide, [0, 1], [-400, 0]);
-  const rightX = interpolate(rightSlide, [0, 1], [400, 0]);
-  const vsScale = interpolate(vsPop, [0, 1], [0, 1]);
-  const vsRotate = interpolate(vsPop, [0, 1], [180, 0]);
-
-  return (
-    <AbsoluteFill
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      {/* Tagline */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 160,
-          width: '100%',
-          textAlign: 'center',
-          opacity: taglinePop,
-          transform: `translateY(${interpolate(taglinePop, [0, 1], [-30, 0])}px)`,
-        }}
-      >
-        <div
-          style={{
-            color: '#60A5FA',
-            fontSize: 38,
-            letterSpacing: 10,
-            fontWeight: 800,
-            fontFamily: FONT,
-          }}
-        >
-          {config.intro.tagline}
-        </div>
-      </div>
-
-      {/* Phone images side by side */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 40,
-          marginTop: -60,
-        }}
-      >
-        {/* Left phone */}
-        <div
-          style={{
-            transform: `translateX(${leftX}px) translateY(${Math.sin(frame / 16) * 10}px)`,
-            opacity: leftSlide,
-          }}
-        >
-          <div
-            style={{
-              width: 280,
-              height: 440,
-              borderRadius: 44,
-              overflow: 'hidden',
-              border: `3px solid ${leftPhone.color}`,
-              boxShadow: `0 0 60px ${leftPhone.color}66, inset 0 0 30px rgba(0,0,0,0.3)`,
-            }}
-          >
-            <Img
-              src={leftPhone.image}
-              style={{ width: '120%', height: '120%', objectFit: 'cover', objectPosition: 'center', transform: 'rotate(-5deg) scale(1.1)' }}
-            />
-          </div>
-        </div>
-
-        {/* VS Badge */}
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 10,
-            transform: `scale(${vsScale}) rotate(${vsRotate}deg)`,
-          }}
-        >
-          <div
-            style={{
-              width: 140,
-              height: 140,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #EF4444 0%, #F97316 50%, #EAB308 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: `0 0 ${vsGlow}px rgba(239,68,68,0.6), 0 0 ${vsGlow * 2}px rgba(239,68,68,0.3)`,
-            }}
-          >
-            <div
-              style={{
-                color: 'white',
-                fontSize: 56,
-                fontWeight: 900,
-                fontFamily: FONT,
-                textShadow: '0 2px 10px rgba(0,0,0,0.4)',
-              }}
-            >
-              VS
-            </div>
-          </div>
-        </div>
-
-        {/* Right phone */}
-        <div
-          style={{
-            transform: `translateX(${rightX}px) translateY(${Math.cos(frame / 16) * 10}px)`,
-            opacity: rightSlide,
-          }}
-        >
-          <div
-            style={{
-              width: 280,
-              height: 440,
-              borderRadius: 44,
-              overflow: 'hidden',
-              border: `3px solid ${rightPhone.color}`,
-              boxShadow: `0 0 60px ${rightPhone.color}66, inset 0 0 30px rgba(0,0,0,0.3)`,
-            }}
-          >
-            <Img
-              src={rightPhone.image}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Phone names */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 500,
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 60,
-          opacity: namesReveal,
-          transform: `translateY(${interpolate(namesReveal, [0, 1], [40, 0])}px)`,
-        }}
-      >
-        <div
-          style={{
-            color: leftPhone.color,
-            fontSize: 46,
-            fontWeight: 900,
-            fontFamily: FONT,
-            textShadow: `0 0 20px ${leftPhone.color}55`,
-          }}
-        >
-          {leftPhone.name}
-        </div>
-
-        <div
-          style={{
-            color: 'rgba(255,255,255,0.3)',
-            fontSize: 40,
-            fontWeight: 700,
-            fontFamily: FONT,
-          }}
-        >
-          vs
-        </div>
-
-        <div
-          style={{
-            color: rightPhone.color,
-            fontSize: 46,
-            fontWeight: 900,
-            fontFamily: FONT,
-            textShadow: `0 0 20px ${rightPhone.color}55`,
-          }}
-        >
-          {rightPhone.name}
-        </div>
-      </div>
-
-      {/* Subtitle */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 380,
-          width: '100%',
-          textAlign: 'center',
-          opacity: subtitleReveal,
-          transform: `translateY(${interpolate(subtitleReveal, [0, 1], [20, 0])}px)`,
-        }}
-      >
-        <div
-          style={{
-            color: 'rgba(255,255,255,0.6)',
-            fontSize: 36,
-            fontWeight: 600,
-            fontFamily: FONT,
-            padding: '0 60px',
-          }}
-        >
-          {config.intro.subtitle}
-        </div>
-      </div>
-
-      {/* Swipe up hint */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 260,
-          width: '100%',
-          textAlign: 'center',
-          opacity: interpolate(subtitleReveal, [0, 1], [0, 0.6]),
-        }}
-      >
-        <div
-          style={{
-            color: 'white',
-            fontSize: 28,
-            fontWeight: 600,
-            fontFamily: FONT,
-            transform: `translateY(${Math.sin(frame / 10) * 6}px)`,
-          }}
-        >
-          ▼ LET THE BATTLE BEGIN ▼
-        </div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const PhoneHeader = () => {
-  const frame = useCurrentFrame();
-
-  return (
-    <>
-      <div
-        style={{
-          position: 'absolute',
-          top: 70,
-          left: 50,
-          width: 260,
-          textAlign: 'center',
-        }}
-      >
-        <div
-          style={{
-            width: 220,
-            height: 340,
-            margin: '0 auto',
-            borderRadius: 40,
-            overflow: 'hidden',
-            border: `2px solid ${leftPhone.color}`,
-            boxShadow: `0 0 40px ${leftPhone.color}55`,
-            transform: `translateY(${Math.sin(frame / 18) * 8}px)`,
-          }}
-        >
-          <Img
-            src={leftPhone.image}
-            style={{
-              width: '120%',
-              height: '120%',
-              objectFit: 'cover',
-              objectPosition: 'center',
-              transform: 'rotate(-5deg) scale(1.1)',
-            }}
-          />
-        </div>
-
-        <div
-          style={{
-            marginTop: 18,
-            color: 'white',
-            fontSize: 28,
-            fontWeight: 800,
-            fontFamily: FONT,
-          }}
-        >
-          {leftPhone.short}
-        </div>
-      </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          top: 70,
-          right: 50,
-          width: 260,
-          textAlign: 'center',
-        }}
-      >
-        <div
-          style={{
-            width: 220,
-            height: 340,
-            margin: '0 auto',
-            borderRadius: 40,
-            overflow: 'hidden',
-            border: `2px solid ${rightPhone.color}`,
-            boxShadow: `0 0 40px ${rightPhone.color}55`,
-            transform: `translateY(${Math.cos(frame / 18) * 8}px)`,
-          }}
-        >
-          <Img
-            src={rightPhone.image}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
-        </div>
-
-        <div
-          style={{
-            marginTop: 18,
-            color: 'white',
-            fontSize: 28,
-            fontWeight: 800,
-            fontFamily: FONT,
-          }}
-        >
-          {rightPhone.short}
-        </div>
-      </div>
-    </>
-  );
-};
-
-const WinnerBadge = ({winner, progress}: {winner: string; progress: number}) => {
-  const scale = interpolate(progress, [0, 1], [0.5, 1]);
-  const badgeOpacity = interpolate(progress, [0, 1], [0, 1]);
-
-  if (winner === 'neutral') {
-    return (
-      <div
-        style={{
-          padding: '8px 18px',
-          borderRadius: 999,
-          background: 'rgba(255,255,255,0.08)',
-          color: 'white',
-          fontSize: 18,
-          fontWeight: 700,
-          fontFamily: FONT,
-          opacity: badgeOpacity,
-          transform: `scale(${scale})`,
-        }}
-      >
-        EVEN
-      </div>
-    );
-  }
-
-  return (
-    <div
-      style={{
-        padding: '8px 18px',
-        borderRadius: 999,
-        background: 'rgba(34,197,94,0.18)',
-        border: '1px solid rgba(34,197,94,0.4)',
-        color: winnerColor,
-        fontSize: 18,
-        fontWeight: 800,
-        fontFamily: FONT,
-        opacity: badgeOpacity,
-        transform: `scale(${scale})`,
-      }}
-    >
-      WINNER
-    </div>
-  );
-};
-
-const SpecRow = ({spec, index}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-
-  const rowDelay = index * 18;
-  const winnerDelay = rowDelay + 12;
-
-  const reveal = spring({
-    frame: frame - rowDelay,
-    fps,
-    config: {
-      damping: 14,
-      stiffness: 120,
-    },
-  });
-
-  const winnerReveal = spring({
-    frame: frame - winnerDelay,
-    fps,
-    config: {
-      damping: 12,
-      stiffness: 100,
-    },
-  });
-
-  const translateY = interpolate(reveal, [0, 1], [60, 0]);
-  const opacity = interpolate(reveal, [0, 1], [0, 1]);
-
-  const winner = spec[3];
-
-  const leftIsWinner = winner === 'left';
-  const rightIsWinner = winner === 'right';
-
-  const leftBg = interpolate(
-    leftIsWinner ? winnerReveal : 0,
-    [0, 1],
-    [0, 1],
-  );
-  const rightBg = interpolate(
-    rightIsWinner ? winnerReveal : 0,
-    [0, 1],
-    [0, 1],
-  );
-
-  const lerpColor = (from: string, to: string, t: number) => {
-    const parseRgba = (s: string) => {
-      const m = s.match(/[\d.]+/g);
-      return m ? m.map(Number) : [0, 0, 0, 0];
-    };
-    const f = parseRgba(from);
-    const tt = parseRgba(to);
-    return `rgba(${f.map((v, i) => v + (tt[i] - v) * t).join(',')})`;
-  };
-
-  const neutralBg = 'rgba(255,255,255,0.05)';
-  const neutralBorder = 'rgba(255,255,255,0.06)';
-  const winBg = 'rgba(34,197,94,0.16)';
-  const winBorder = 'rgba(34,197,94,0.35)';
-
-  return (
-    <div
-      style={{
-        opacity,
-        transform: `translateY(${translateY}px)`,
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: 24,
-        padding: 16,
-        marginBottom: 12,
-      }}
-    >
-      {/* Spec name centered */}
-      <div
-        style={{
-          textAlign: 'center',
-          marginBottom: 10,
-        }}
-      >
-        <div
-          style={{
-            color: '#A5B4FC',
-            fontSize: 26,
-            fontWeight: 800,
-            fontFamily: FONT,
-          }}
-        >
-          {spec[0]}
-        </div>
-      </div>
-
-      {/* Winner badge row - positioned above the winning phone */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 12,
-          marginBottom: 6,
-          minHeight: 32,
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          {(leftIsWinner || winner === 'neutral') && (
-            <WinnerBadge winner={winner} progress={winnerReveal} />
-          )}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          {(rightIsWinner || winner === 'neutral') && (
-            <WinnerBadge winner={winner} progress={winnerReveal} />
-          )}
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 12,
-        }}
-      >
-        <div
-          style={{
-            padding: 14,
-            borderRadius: 18,
-            background: lerpColor(neutralBg, winBg, leftBg),
-            border: `1px solid ${lerpColor(neutralBorder, winBorder, leftBg)}`,
-            boxShadow: leftIsWinner
-              ? `0 0 ${20 * winnerReveal}px rgba(34,197,94,${0.2 * winnerReveal})`
-              : 'none',
-          }}
-        >
-          <div
-            style={{
-              color: lerpColor(
-                'rgba(255,255,255,1)',
-                'rgba(34,197,94,1)',
-                leftBg,
-              ),
-              fontSize: 30,
-              fontWeight: 800,
-              fontFamily: FONT,
-            }}
-          >
-            {spec[1]}
-          </div>
-        </div>
-
-        <div
-          style={{
-            padding: 14,
-            borderRadius: 18,
-            background: lerpColor(neutralBg, winBg, rightBg),
-            border: `1px solid ${lerpColor(neutralBorder, winBorder, rightBg)}`,
-            boxShadow: rightIsWinner
-              ? `0 0 ${20 * winnerReveal}px rgba(34,197,94,${0.2 * winnerReveal})`
-              : 'none',
-          }}
-        >
-          <div
-            style={{
-              color: lerpColor(
-                'rgba(255,255,255,1)',
-                'rgba(34,197,94,1)',
-                rightBg,
-              ),
-              fontSize: 30,
-              fontWeight: 800,
-              fontFamily: FONT,
-            }}
-          >
-            {spec[2]}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ComparisonSlide = ({section}) => {
-  const frame = useCurrentFrame();
-
-  return (
-    <AbsoluteFill>
-      <PhoneHeader />
-
-      {/* Section title centered between the two phone images */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 160,
-          left: 310,
-          right: 310,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: 160,
-        }}
-      >
-        <div
-          style={{
-            color: 'white',
-            fontSize: 40,
-            fontWeight: 900,
-            fontFamily: FONT,
-            textAlign: 'center',
-            lineHeight: 1.2,
-            transform: `scale(${1 + Math.sin(frame / 18) * 0.02})`,
-            textShadow: '0 0 20px rgba(96,165,250,0.3)',
-          }}
-        >
-          {section.title}
-        </div>
-      </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          top: 460,
-          left: 40,
-          right: 40,
-          bottom: 220,
-        }}
-      >
-        {section.specs.map((spec, i) => (
-          <SpecRow key={i} spec={spec} index={i} />
-        ))}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const SECTION_TITLE_DURATION = 40; // ~1.3s title card
-
-const SectionTitleSlide = ({title, emoji, index}: {title: string; emoji: string; index: number}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-
-  // Line slides in
-  const lineReveal = spring({
-    frame,
-    fps,
-    config: { damping: 14, stiffness: 120 },
-  });
-
-  // Emoji drops in
-  const emojiPop = spring({
-    frame: frame - 3,
-    fps,
-    config: { damping: 10, stiffness: 140 },
-  });
-
-  // Title scales up
-  const titlePop = spring({
-    frame: frame - 8,
-    fps,
-    config: { damping: 10, stiffness: 100 },
-  });
-
-  // Number fades in
-  const numReveal = spring({
-    frame: frame - 3,
-    fps,
-    config: { damping: 14, stiffness: 120 },
-  });
-
-  const emojiScale = interpolate(emojiPop, [0, 1], [0, 1]);
-  const emojiOpacity = interpolate(emojiPop, [0, 1], [0, 1]);
-  const titleScale = interpolate(titlePop, [0, 1], [0.6, 1]);
-  const titleOpacity = interpolate(titlePop, [0, 1], [0, 1]);
-  const lineWidth = interpolate(lineReveal, [0, 1], [0, 500]);
-  const numOpacity = interpolate(numReveal, [0, 1], [0, 0.4]);
-
-  // Subtle floating
-  const floatY = Math.sin(frame / 12) * 4;
-
-  return (
-    <AbsoluteFill
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      {/* Section number */}
-      <div
-        style={{
-          position: 'absolute',
-          opacity: numOpacity,
-          transform: `translateY(${floatY}px)`,
-        }}
-      >
-        <div
-          style={{
-            color: 'rgba(255,255,255,0.06)',
-            fontSize: 400,
-            fontWeight: 900,
-            fontFamily: FONT,
-            lineHeight: 1,
-          }}
-        >
-          {String(index + 1).padStart(2, '0')}
-        </div>
-      </div>
-
-      {/* Top line */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '38%',
-          width: lineWidth,
-          height: 3,
-          background: 'linear-gradient(90deg, transparent, rgba(96,165,250,0.6), transparent)',
-          borderRadius: 2,
-        }}
-      />
-
-      {/* Emoji */}
-      <div
-        style={{
-          opacity: emojiOpacity,
-          transform: `scale(${emojiScale}) translateY(${floatY - 10}px)`,
-          textAlign: 'center',
-          marginBottom: 20,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 100,
-            lineHeight: 1.2,
-          }}
-        >
-          {emoji}
-        </div>
-      </div>
-
-      {/* Title */}
-      <div
-        style={{
-          opacity: titleOpacity,
-          transform: `scale(${titleScale}) translateY(${floatY}px)`,
-          textAlign: 'center',
-        }}
-      >
-        <div
-          style={{
-            color: 'white',
-            fontSize: 96,
-            fontWeight: 900,
-            fontFamily: FONT,
-            textShadow: '0 0 40px rgba(96,165,250,0.3)',
-          }}
-        >
-          {title}
-        </div>
-      </div>
-
-      {/* Bottom line */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '38%',
-          width: lineWidth,
-          height: 3,
-          background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.6), transparent)',
-          borderRadius: 2,
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
-const FinalSlide = () => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-
-  const {leftWins, rightWins} = countWins();
-  const overallWinner = leftWins >= rightWins ? 'left' : 'right';
-  const winnerPhone = overallWinner === 'left' ? leftPhone : rightPhone;
-  const loserPhone = overallWinner === 'left' ? rightPhone : leftPhone;
-  const winnerWins = Math.max(leftWins, rightWins);
-  const loserWins = Math.min(leftWins, rightWins);
-
-  const pop = spring({
-    frame,
-    fps,
-    config: { damping: 12, stiffness: 100 },
-  });
-
-  const imageReveal = spring({
-    frame: frame - 15,
-    fps,
-    config: { damping: 12, stiffness: 80 },
-  });
-
-  const scoreReveal = spring({
-    frame: frame - 30,
-    fps,
-    config: { damping: 14, stiffness: 100 },
-  });
-
-  const ctaReveal = spring({
-    frame: frame - 50,
-    fps,
-    config: { damping: 14, stiffness: 80 },
-  });
-
-  const imageScale = interpolate(imageReveal, [0, 1], [0.5, 1]);
-  const imageOpacity = interpolate(imageReveal, [0, 1], [0, 1]);
-  const glowPulse = 30 + Math.sin(frame / 8) * 15;
-
-  return (
-    <AbsoluteFill
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 50,
-      }}
-    >
-      {/* FINAL VERDICT label */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 120,
-          width: '100%',
-          textAlign: 'center',
-          opacity: pop,
-          transform: `translateY(${interpolate(pop, [0, 1], [-20, 0])}px)`,
-        }}
-      >
-        <div
-          style={{
-            color: '#60A5FA',
-            fontSize: 30,
-            letterSpacing: 6,
-            fontWeight: 700,
-            fontFamily: FONT,
-          }}
-        >
-          FINAL VERDICT
-        </div>
-      </div>
-
-      {/* Winner phone image */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 200,
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              opacity: imageOpacity,
-              transform: `scale(${imageScale})`,
-            }}
-          >
-            <div
-              style={{
-                width: 300,
-                height: 460,
-                borderRadius: 48,
-                overflow: 'hidden',
-                border: `4px solid ${winnerColor}`,
-                boxShadow: `0 0 ${glowPulse}px rgba(34,197,94,0.5), 0 0 ${glowPulse * 2}px rgba(34,197,94,0.2)`,
-              }}
-            >
-              <Img
-                src={winnerPhone.image}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Winner name + crown */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 700,
-              width: '100%',
-              textAlign: 'center',
-              opacity: scoreReveal,
-              transform: `translateY(${interpolate(scoreReveal, [0, 1], [30, 0])}px)`,
-            }}
-          >
-            <div style={{ fontSize: 48, marginBottom: 12 }}>👑</div>
-            <div
-              style={{
-                color: winnerColor,
-                fontSize: 64,
-                fontWeight: 900,
-                fontFamily: FONT,
-                textShadow: '0 0 30px rgba(34,197,94,0.4)',
-                marginBottom: 16,
-              }}
-            >
-              {winnerPhone.name}
-            </div>
-            <div
-              style={{
-                color: winnerColor,
-                fontSize: 36,
-                fontWeight: 800,
-                fontFamily: FONT,
-                marginBottom: 40,
-              }}
-            >
-              WINS {winnerWins} – {loserWins}
-            </div>
-          </div>
-
-          {/* Summary cards */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 980,
-              left: 50,
-              right: 50,
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 20,
-              opacity: scoreReveal,
-              transform: `translateY(${interpolate(scoreReveal, [0, 1], [20, 0])}px)`,
-            }}
-          >
-            <div
-              style={{
-                padding: 24,
-                borderRadius: 24,
-                background: 'rgba(34,197,94,0.12)',
-                border: '1px solid rgba(34,197,94,0.3)',
-              }}
-            >
-              <div
-                style={{
-                  color: winnerColor,
-                  fontSize: 22,
-                  fontWeight: 800,
-                  fontFamily: FONT,
-                  marginBottom: 8,
-                }}
-              >
-                {winnerPhone.short}
-              </div>
-              <div
-                style={{
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: 22,
-                  fontFamily: FONT,
-                  lineHeight: 1.4,
-                }}
-              >
-                {overallWinner === 'left' ? config.verdict.leftSummary : config.verdict.rightSummary}
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: 24,
-                borderRadius: 24,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >
-              <div
-                style={{
-                  color: loserPhone.color,
-                  fontSize: 22,
-                  fontWeight: 800,
-                  fontFamily: FONT,
-                  marginBottom: 8,
-                }}
-              >
-                {loserPhone.short}
-              </div>
-              <div
-                style={{
-                  color: 'rgba(255,255,255,0.5)',
-                  fontSize: 22,
-                  fontFamily: FONT,
-                  lineHeight: 1.4,
-                }}
-              >
-                {overallWinner === 'left' ? config.verdict.rightSummary : config.verdict.leftSummary}
-              </div>
-            </div>
-          </div>
-
-      {/* CTA */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 300,
-          width: '100%',
-          textAlign: 'center',
-          opacity: ctaReveal,
-          transform: `scale(${interpolate(ctaReveal, [0, 1], [0.8, 1])})`,
-        }}
-      >
-        <div
-          style={{
-            display: 'inline-flex',
-            padding: '20px 40px',
-            borderRadius: 999,
-            background: 'linear-gradient(90deg, #2563EB 0%, #7C3AED 100%)',
-            color: 'white',
-            fontSize: 32,
-            fontWeight: 800,
-            fontFamily: FONT,
-          }}
-        >
-          {config.verdict.cta}
-        </div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// Frames needed per section based on spec count
-const sectionDuration = (specCount: number) => {
-  // base frames for title + first row reveal + winner reveal + viewing buffer
-  const base = 40;
-  const perRow = 18; // stagger delay per row
-  const winnerBuffer = 12; // delay before winner highlight
-  const viewingTime = 30; // time to view after last winner revealed
-  return base + (specCount - 1) * perRow + winnerBuffer + viewingTime;
-};
-
-const INTRO_DURATION = 90;
-const SECTION_PAUSE = 9; // 0.3s at 30fps
-
-export const getTotalDuration = () => {
-  let total = INTRO_DURATION;
-  for (const section of sections) {
-    total += SECTION_TITLE_DURATION; // title card
-    total += sectionDuration(section.specs.length) + SECTION_PAUSE;
-  }
-  total += config.finalSlideDuration;
-  return total;
-};
-
-export default function VerticalPhoneComparison() {
-  const {finalSlideDuration} = config;
-
-  // Calculate cumulative start frames for title cards + comparison slides
-  const titleStarts: number[] = [];
-  const compStarts: number[] = [];
-  let cursor = INTRO_DURATION;
-  for (const section of sections) {
-    titleStarts.push(cursor);
-    cursor += SECTION_TITLE_DURATION;
-    compStarts.push(cursor);
-    cursor += sectionDuration(section.specs.length) + SECTION_PAUSE;
-  }
-
-  return (
-    <AbsoluteFill
-      style={{
-        fontFamily: FONT,
-      }}
-    >
-      <FontLoader />
-      <Background />
-
-      <Sequence from={0} durationInFrames={INTRO_DURATION}>
-        <IntroSlide />
-      </Sequence>
-
-      {sections.map((section, i) => (
-        <React.Fragment key={i}>
-          <Sequence
-            from={titleStarts[i]}
-            durationInFrames={SECTION_TITLE_DURATION}
-          >
-            <SectionTitleSlide title={section.title} emoji={section.emoji} index={i} />
-          </Sequence>
-          <Sequence
-            from={compStarts[i]}
-            durationInFrames={sectionDuration(section.specs.length)}
-          >
-            <ComparisonSlide section={section} />
-          </Sequence>
-        </React.Fragment>
-      ))}
-
-      <Sequence
-        from={cursor}
-        durationInFrames={finalSlideDuration}
-      >
-        <FinalSlide />
-      </Sequence>
     </AbsoluteFill>
   );
 }
+
+function TitleText({ text, size, color = 'white', align = 'center', opacity = 1, transform = 'none' }: { text: string; size: number; color?: string; align?: 'center' | 'left' | 'right'; opacity?: number; transform?: string; }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        width: '100%',
+        display: 'flex',
+        justifyContent: align === 'center' ? 'center' : align === 'left' ? 'flex-start' : 'flex-end',
+        pointerEvents: 'none',
+        textAlign: align,
+        opacity,
+        transform,
+      }}
+    >
+      <span
+        style={{
+          fontFamily: FONT,
+          fontSize: size,
+          lineHeight: 0.98,
+          fontWeight: 900,
+          letterSpacing: '-0.04em',
+          color,
+          textShadow: `0 0 18px rgba(37, 99, 235, 0.25), 0 0 52px rgba(30, 41, 59, 0.45)`,
+          whiteSpace: 'pre-wrap',
+        }}
+      >
+        {text}
+      </span>
+    </div>
+  );
+}
+
+function GlassCard({ label, accent, index }: { label: string; accent: string; index: number }) {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const orbit = useSpring(frame, fps, 180 + index * 2, 120, 18);
+  const x = interpolate(orbit, [0, 1], [0, 1]);
+  const y = interpolate(orbit, [0, 1], [0, 1]);
+  const wobble = Math.sin(frame / 22 + index) * 6;
+  const angle = (frame / 35 + index * 0.9) * (index % 2 === 0 ? 1 : -1);
+  const radius = 260 + index * 13;
+  const cardX = 960 + Math.cos(angle) * radius + x * 18;
+  const cardY = 540 + Math.sin(angle * 1.1) * (radius * 0.68) + y * 10 + wobble;
+  const scale = 1 + Math.sin(frame / 24 + index) * 0.02;
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: cardX - 120,
+        top: cardY - 58,
+        width: 240,
+        height: 116,
+        borderRadius: 28,
+        border: `1px solid ${BORDER}`,
+        background: 'linear-gradient(160deg, rgba(15, 23, 42, 0.84), rgba(8, 15, 30, 0.6))',
+        backdropFilter: 'blur(18px)',
+        boxShadow: `0 28px 60px rgba(8, 15, 33, 0.45), 0 0 18px ${accent}35`,
+        transform: `scale(${scale}) rotate(${Math.cos(frame / 30 + index) * 2}deg)`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          inset: 'auto 14px 12px 14px',
+          height: 2,
+          borderRadius: 999,
+          background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
+          opacity: 0.45,
+        }}
+      />
+      <span
+        style={{
+          fontFamily: FONT,
+          fontWeight: 700,
+          fontSize: 26,
+          color: 'white',
+          letterSpacing: '-0.03em',
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+export default function Component() {
+  const frame = useCurrentFrame();
+  const { fps, width, height } = useVideoConfig();
+
+  const scene = frame < 60
+    ? 'one'
+    : frame < 120
+      ? 'two'
+      : frame < 180
+        ? 'three'
+        : frame < 270
+          ? 'four'
+          : frame < 360
+            ? 'five'
+            : 'six';
+
+  const zoom = interpolate(frame, [0, 40, 90], [1, 1.3, 1.08], { extrapolateRight: 'clamp' });
+  const globalTilt = interpolate(frame, [0, 120, 450], [0, 6, -4]);
+  const cameraX = interpolate(frame, [0, 120, 240, 450], [0, -6, 8, 0]);
+  const cameraY = interpolate(frame, [0, 120, 320, 450], [0, 12, -10, 0]);
+
+  const sceneOneSpring = useSpring(frame, fps, 0, 160, 16);
+  const sceneTwoSpring = useSpring(frame, fps, 60, 160, 14);
+  const sceneThreeSpring = useSpring(frame, fps, 120, 180, 14);
+  const sceneFourSpring = useSpring(frame, fps, 180, 160, 12);
+  const sceneFiveSpring = useSpring(frame, fps, 270, 160, 14);
+  const sceneSixSpring = useSpring(frame, fps, 360, 180, 16);
+
+  const sceneOneScale = interpolate(sceneOneSpring, [0, 1], [0.82, 1.05]);
+  const sceneTwoScale = interpolate(sceneTwoSpring, [0, 1], [0.94, 1.08]);
+  const sceneThreeScale = interpolate(sceneThreeSpring, [0, 1], [0.96, 1.04]);
+  const sceneFourScale = interpolate(sceneFourSpring, [0, 1], [0.88, 1.04]);
+  const sceneFiveScale = interpolate(sceneFiveSpring, [0, 1], [0.94, 1.02]);
+  const sceneSixScale = interpolate(sceneSixSpring, [0, 1], [0.96, 1.06]);
+
+  const ring = interpolate(frame, [360, 390, 420, 450], [0, 1.1, 1.35, 1.8], { extrapolateRight: 'clamp' });
+  const sweepLine = interpolate(frame, [360, 390, 420], [0, 1, 0], { extrapolateRight: 'clamp' });
+  const heroGlow = 0.55 + Math.sin(frame / 20) * 0.12;
+
+  return (
+    <AbsoluteFill style={{ background: BACKDROP, overflow: 'hidden', fontFamily: FONT }}>
+      <SceneBackground />
+
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          transform: `translate(${cameraX}px, ${cameraY}px) scale(${zoom}) rotateX(${globalTilt * 0.02}deg) rotateY(${globalTilt * 0.01}deg)`,
+          transformOrigin: 'center center',
+          willChange: 'transform',
+        }}
+      >
+        {scene === 'one' && (
+          <>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(7, 13, 26, 0.08), rgba(2, 6, 23, 0.4))' }} />
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: `translate(-50%, -50%) scale(${sceneOneScale}) rotate(-4deg)`,
+                filter: 'blur(0.2px)',
+                textShadow: '0 0 24px rgba(37,99,235,0.35), 0 0 70px rgba(37,99,235,0.18)',
+              }}
+            >
+              <TitleText text="2026" size={260} color="white" />
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: 360,
+                height: 360,
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '50%',
+                border: `1px solid rgba(37,99,235,0.45)`,
+                boxShadow: `0 0 50px rgba(37,99,235,0.28), inset 0 0 40px rgba(37,99,235,0.15)`,
+                opacity: 0.6,
+                filter: 'blur(1px)',
+              }}
+            />
+          </>
+        )}
+
+        {scene === 'two' && (
+          <>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '44%',
+                transform: `translate(-50%, -50%) scale(${sceneTwoScale + Math.sin(frame / 18) * 0.02}) rotate(-1deg)`,
+                textShadow: '0 0 30px rgba(37,99,235,0.35), 0 0 60px rgba(15,23,42,0.55)',
+              }}
+            >
+              <TitleText text="THE BIGGEST" size={120} color="white" />
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '56%',
+                width: 70,
+                height: 70,
+                transform: `translate(-50%, -50%) rotate(${Math.sin(frame / 10) * 8}deg) scale(${1 + sceneTwoScale * 0.1})`,
+                borderRadius: 24,
+                background: `linear-gradient(135deg, ${ACCENT}, #60a5fa)`,
+                boxShadow: `0 0 30px rgba(37,99,235,0.35)`,
+                opacity: 0.8,
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: '110%',
+                height: '120%',
+                transform: 'translate(-50%, -50%)',
+                background: 'linear-gradient(180deg, rgba(3,7,18,0.06), rgba(15,23,42,0.12))',
+                filter: 'blur(10px)',
+                opacity: 0.4,
+              }}
+            />
+          </>
+        )}
+
+        {scene === 'three' && (
+          <>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '42%',
+                transform: `translate(-50%, -50%) scale(${sceneThreeScale})`,
+                letterSpacing: '-0.06em',
+              }}
+            >
+              <TitleText text="STAGE" size={150} color="white" />
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '58%',
+                transform: `translate(-50%, -50%) scale(${sceneThreeScale})`,
+                letterSpacing: '-0.06em',
+              }}
+            >
+              <TitleText text="OF 2026" size={88} color="#bfdbfe" />
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                left: `${52 + (frame - 120) * 0.02}%`,
+                top: `${30 + Math.sin(frame / 24) * 6}%`,
+                width: 140,
+                height: 140,
+                borderRadius: 32,
+                background: 'linear-gradient(135deg, rgba(37,99,235,0.18), rgba(56,189,248,0.04))',
+                border: '1px solid rgba(147, 197, 253, 0.2)',
+                filter: 'blur(0.4px)',
+                boxShadow: '0 0 24px rgba(37,99,235,0.12)',
+              }}
+            />
+          </>
+        )}
+
+        {scene === 'four' && (
+          <>
+            <div style={{ position: 'absolute', left: '50%', top: '28%', transform: 'translate(-50%, -50%)', opacity: 0.18, filter: 'blur(34px)', width: 420, height: 420, borderRadius: '50%', background: `radial-gradient(circle, ${ACCENT}, transparent 65%)` }} />
+            <div style={{ position: 'absolute', left: '50%', top: '32%', transform: 'translate(-50%, -50%)', opacity: 0.35, filter: 'blur(60px)', width: 560, height: 140, background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)` }} />
+            <div style={{ position: 'absolute', left: '50%', top: '44%', transform: 'translate(-50%, -50%)', opacity: 0.15, filter: 'blur(18px)', width: '100%', height: 140, background: 'linear-gradient(90deg, transparent, rgba(147,197,253,0.25), transparent)' }} />
+
+            {[['BUILDING', 0], ['PRODUCTION READY', 1], ['AI', 2]].map(([label, index]) => {
+              const show = clamp((frame - (180 + Number(index) * 20)) / 16, 0, 1);
+              const scale = interpolate(show, [0, 0.25, 1], [0.65, 1.08, 1.18]);
+              const y = interpolate(show, [0, 1], [40, 0]);
+              const intensity = index === 2 ? 1.35 : 1;
+              const color = index === 2 ? '#eff6ff' : 'white';
+              const size = index === 2 ? 180 : 64 + Number(index) * 8;
+              const top = index === 0 ? '28%' : index === 1 ? '46%' : '64%';
+
+              return (
+                <div
+                  key={`word-${label}`}
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top,
+                    transform: `translate(-50%, -50%) translateY(${y}px) scale(${scale})`,
+                    opacity: show,
+                    textAlign: 'center',
+                    filter: index === 2 ? 'drop-shadow(0 0 22px rgba(37,99,235,0.65))' : 'none',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: FONT,
+                      fontSize: size,
+                      lineHeight: 1,
+                      fontWeight: 900,
+                      letterSpacing: index === 2 ? '-0.08em' : '-0.04em',
+                      color,
+                      textShadow: index === 2
+                        ? '0 0 24px rgba(37,99,235,0.8), 0 0 72px rgba(96,165,250,0.45)'
+                        : '0 0 18px rgba(148,163,184,0.2)',
+                      ...glowStyle(ACCENT, intensity),
+                    }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {scene === 'five' && (
+          <>
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: 520, height: 520, borderRadius: '50%', border: '1px solid rgba(148,163,184,0.12)', boxShadow: '0 0 50px rgba(37,99,235,0.08)' }} />
+            {CARD_LABELS.map((label, index) => (
+              <GlassCard key={label} label={label} accent={index % 2 === 0 ? 'rgba(37,99,235,0.9)' : 'rgba(56,189,248,0.9)'} index={index} />
+            ))}
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: 280, height: 280, borderRadius: '50%', border: `1px solid rgba(37,99,235,0.35)`, boxShadow: '0 0 30px rgba(37,99,235,0.18)' }} />
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%) scale(1 + Math.sin(frame / 32) * 0.02)',
+                fontFamily: FONT,
+                fontSize: 70,
+                fontWeight: 800,
+                color: '#eff6ff',
+                letterSpacing: '-0.05em',
+                opacity: 0.9,
+              }}
+            >
+              ORBITAL SYSTEM
+            </div>
+          </>
+        )}
+
+        {scene === 'six' && (
+          <>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(4, 8, 18, 0.5), rgba(2, 6, 23, 0.94))' }} />
+            <div style={{ position: 'absolute', left: '50%', top: '28%', transform: 'translate(-50%, -50%) scale(1.08)', opacity: 0.18, filter: 'blur(60px)', width: 760, height: 760, borderRadius: '50%', background: `radial-gradient(circle, rgba(37,99,235,0.65), transparent 60%)` }} />
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: 820 + ring * 160, height: 820 + ring * 160, borderRadius: '50%', border: `2px solid rgba(96,165,250,${0.35 + ring * 0.25})`, boxShadow: `0 0 ${30 + ring * 40}px rgba(37,99,235,${0.15 + ring * 0.2})`, opacity: 0.85 }} />
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: '100%', height: 2, background: `linear-gradient(90deg, transparent, rgba(96,165,250,${0.45 + sweepLine * 0.35}), transparent)`, filter: 'blur(2px)', opacity: 0.7 }} />
+            <div style={{ position: 'absolute', left: '50%', top: '18%', transform: 'translate(-50%, -50%) scale(1.05)', color: '#eff6ff', textAlign: 'center' }}>
+              <div style={{ fontFamily: FONT, fontSize: 26, textTransform: 'uppercase', letterSpacing: '0.35em', color: '#bfdbfe', opacity: 0.82 }}>BrowserStack</div>
+              <div style={{ fontFamily: FONT, fontSize: 82, fontWeight: 900, lineHeight: 1, letterSpacing: '-0.055em', marginTop: 8 }}>Leadership Summit</div>
+              <div style={{ fontFamily: FONT, fontSize: 30, fontWeight: 600, color: '#dbeafe', marginTop: 16 }}>22 July 2026</div>
+            </div>
+            <div style={{ position: 'absolute', left: '50%', top: '72%', transform: 'translate(-50%, -50%) scale(1.02)', textAlign: 'center' }}>
+              <span style={{ fontFamily: FONT, fontSize: 56, fontWeight: 900, letterSpacing: '-0.05em', color: '#eff6ff', textShadow: '0 0 30px rgba(37,99,235,0.35)' }}>REGISTER NOW</span>
+            </div>
+            <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', opacity: 0.12, filter: 'blur(18px)', fontFamily: FONT, fontSize: 240, fontWeight: 900, letterSpacing: '-0.08em', color: 'white', textAlign: 'center' }}>AI</div>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '53%',
+                transform: 'translate(-50%, -50%)',
+                color: '#eff6ff',
+                fontFamily: FONT,
+                fontSize: 180,
+                fontWeight: 900,
+                letterSpacing: '-0.08em',
+                textShadow: '0 0 28px rgba(37,99,235,0.65), 0 0 65px rgba(96,165,250,0.35)',
+                opacity: sceneSixScale,
+              }}
+            >
+              AI
+            </div>
+            <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 160, background: 'linear-gradient(180deg, transparent, rgba(2,6,23,0.94))' }} />
+          </>
+        )}
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `linear-gradient(180deg, rgba(2,6,23,0.05) 0%, rgba(2,6,23,0.18) 33%, rgba(2,6,23,0.32) 66%, rgba(2,6,23,0.55) 100%)`,
+          mixBlendMode: 'screen',
+          opacity: heroGlow,
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          background: `linear-gradient(135deg, rgba(37,99,235,0.06), transparent 25%, transparent 75%, rgba(56,189,248,0.04))`,
+          opacity: 0.25,
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          backgroundImage: `linear-gradient(rgba(148,163,184,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.03) 1px, transparent 1px)`,
+          backgroundSize: '120px 120px',
+          opacity: 0.18,
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 120,
+          background: 'linear-gradient(180deg, transparent, rgba(2,6,23,0.88))',
+        }}
+      />
+    </AbsoluteFill>
+  );
+}
+
+export const VerticalPhoneComparison = Component;
+
+export const getTotalDuration = () => 15 * 30;

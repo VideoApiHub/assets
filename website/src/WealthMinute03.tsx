@@ -1,0 +1,20 @@
+import React from 'react';
+import { staticFile } from 'remotion';
+import FacelessAutomation, {
+  defaultProps as facelessDefaults,
+  FacelessAutomationProps,
+} from './FacelessAutomation';
+
+export const minute03Defaults: FacelessAutomationProps = {
+  ...facelessDefaults,
+  audioUrl: staticFile('audio/wealth-minute-03.mp3'),
+  captionsUrl: staticFile('captions/wealth-minute-03.srt'),
+  script:
+    "We were taught that working hard automatically leads to financial success, that saving pennies in a checking account counts as investing, and that anyone who talks about getting rich must be greedy or shallow. Meanwhile the wealthy learned an entirely different set of rules. They have been using those rules to build generational wealth while the rest of us argue about whether a four dollar coffee is a reasonable expense. Let me start with something that might sting a little bit but it needs to be said. Your current financial situation is not an accident and it is not just bad luck. Your thinking patterns are shaping your outcomes.",
+};
+
+const WealthMinute03: React.FC<Partial<FacelessAutomationProps>> = (props) => {
+  return <FacelessAutomation {...minute03Defaults} {...props} />;
+};
+
+export default WealthMinute03;

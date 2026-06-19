@@ -11,13 +11,18 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@remotion/cli": "^4.0.468",
+    "@remotion/google-fonts": "^4.0.474",
+    "@remotion/media-utils": "^4.0.474",
     "@remotion/player": "^4.0.468",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "remotion": "^4.0.468",
+    "three": "^0.184.0",
     "typescript": "^6.0.3"
   }
 }
