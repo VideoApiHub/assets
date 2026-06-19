@@ -22,6 +22,7 @@ import WealthMinute10, { minute10Defaults } from './WealthMinute10';
 import WealthMinute11, { minute11Defaults } from './WealthMinute11';
 import WealthMinute12, { minute12Defaults } from './WealthMinute12';
 import SaasDemo, { pillarDemoDefaults, getSaasDemoDuration } from './SaasDemo';
+import { guardianGazeDemo } from './saas-demo-props/guardian-gaze';
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -249,6 +250,18 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={pillarDemoDefaults}
         calculateMetadata={({ props }) => ({
           durationInFrames: getSaasDemoDuration(props as typeof pillarDemoDefaults),
+        })}
+      />
+      <Composition
+        id="SaasDemoGuardianGaze"
+        component={SaasDemo}
+        durationInFrames={getSaasDemoDuration(guardianGazeDemo)}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={guardianGazeDemo}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getSaasDemoDuration(props as typeof guardianGazeDemo),
         })}
       />
     </>

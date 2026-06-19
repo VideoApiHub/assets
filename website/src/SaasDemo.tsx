@@ -1440,9 +1440,12 @@ export const SaasDemo: React.FC<SaasDemoProps> = (props) => {
  * Pillar FSM — example config. Copy this object, swap the values, and you have
  * a brand-new demo. (Assets live in /public/saas/pillar.)
  * ==========================================================================*/
+const BASE =
+  'https://raw.githubusercontent.com/VideoApiHub/assets/refs/heads/main/website/public/';
+
 export const pillarDemoDefaults: SaasDemoProps = {
   brandName: 'Pillar',
-  logo: 'saas/pillar/logo-white.png',
+  logo: `${BASE}saas/pillar/logo-white.png`,
   primary: '#F47C20',
   primaryDark: '#E2620E',
   bg: '#0A0E1A',
@@ -1468,7 +1471,7 @@ export const pillarDemoDefaults: SaasDemoProps = {
     'One platform for technicians in the field and managers in the office. Built for the trades.',
   screens: [
     {
-      image: 'saas/pillar/dashboard.png',
+      image: `${BASE}saas/pillar/dashboard.png`,
       device: 'desktop',
       aspect: 1441 / 1266,
       eyebrow: 'COMMAND CENTER',
@@ -1482,7 +1485,7 @@ export const pillarDemoDefaults: SaasDemoProps = {
       ],
     },
     {
-      image: 'saas/pillar/calendar.png',
+      image: `${BASE}saas/pillar/calendar.png`,
       device: 'desktop',
       aspect: 1898 / 906,
       eyebrow: 'SCHEDULING',
@@ -1491,7 +1494,7 @@ export const pillarDemoDefaults: SaasDemoProps = {
       chips: ['Conflict detection', 'Multi-technician', 'Color-coded'],
     },
     {
-      image: 'saas/pillar/mobile-jobs.png',
+      image: `${BASE}saas/pillar/mobile-jobs.png`,
       device: 'phone',
       aspect: 420 / 656,
       eyebrow: 'MOBILE TECHNICIANS',
@@ -1500,7 +1503,7 @@ export const pillarDemoDefaults: SaasDemoProps = {
       chips: ['Daily schedule', 'Clock in / out', 'Offline ready'],
     },
     {
-      image: 'saas/pillar/profitability.png',
+      image: `${BASE}saas/pillar/profitability.png`,
       device: 'desktop',
       aspect: 1284 / 1088,
       eyebrow: 'ANALYTICS',
